@@ -326,52 +326,52 @@ int main() {
 		// clean canvas
 		flushFrame(&canvas, rgb(0,0,0));
 		
-		//clean vector
-		allLines.clear();
-		
-		//Nambahin Lines biar semua jadi 1
-		mapLines = drawPeta(&canvas, coord(0,0), rgb(50,150,0));
-		
-		heliLines=rotateBaling(&canvas,coord(planeXPosition -= planeVelocity,planeYPosition),rgb(255,255,255),balingCounter++);
-		
-		if(kapalXPosition>508 && kapalYPosition >50) {  //atas
-			kapalLines=drawKapalVertikal(&canvas,coord(kapalXPosition,kapalYPosition -= kapalVelocity),rgb(99,99,99));}
-			else if (kapalXPosition>120 && kapalYPosition >319) {  //kanan
-				kapalLines=drawKapal(&canvas,coord(kapalXPosition -= -kapalVelocity,kapalYPosition),rgb(99,99,99));}
-			else if (kapalXPosition >235 && kapalYPosition<51){ //kiri 
-				kapalLines=drawKapal(&canvas,coord(kapalXPosition -= kapalVelocity,kapalYPosition),rgb(99,99,99));}
-			else {kapalLines=drawKapalVertikal(&canvas,coord(kapalXPosition,kapalYPosition -= -kapalVelocity),rgb(99,99,99));} //bawah
-		allLines.insert(allLines.end(), kapalLines.begin(), kapalLines.end());
-		
-		allLines.insert(allLines.end(), mapLines.begin(), mapLines.end());
-		allLines.insert(allLines.end(), heliLines.begin(), heliLines.end());		
-		
-		//Draw window and get cropped lines								//100 = 1/2 size window
-		croppedLines = cohen_sutherland(&canvas, allLines, windowLocation, windowSize / 2);
-		
-													//200 = size window
-		viewPort(&canvas, viewportOrigin, viewportSize, windowSize, croppedLines);		
-		
-		if (planeXPosition <= -15) {
-			planeXPosition = canvasWidth+15;
-		}
-		
-		if (xPlode == 1) {
-			mul = 1;
-			xPlode = 0;
-			xPlodeLocation = windowLocation;
-		}
-		
-		animateExplosion(&canvas, mul, xPlodeLocation);
-		
-		if (mul == 21) {
-			mul = 0;
-			xPlode = 0;
-			xPlodeLocation = coord(0,0);
-		}
-		if (mul >= 1) {
-			mul++;
-		}
+		//~ //clean vector
+		//~ allLines.clear();
+		//~ 
+		//~ //Nambahin Lines biar semua jadi 1
+		//~ mapLines = drawPeta(&canvas, coord(0,0), rgb(50,150,0));
+		//~ 
+		//~ heliLines=rotateBaling(&canvas,coord(planeXPosition -= planeVelocity,planeYPosition),rgb(255,255,255),balingCounter++);
+		//~ 
+		//~ if(kapalXPosition>508 && kapalYPosition >50) {  //atas
+			//~ kapalLines=drawKapalVertikal(&canvas,coord(kapalXPosition,kapalYPosition -= kapalVelocity),rgb(99,99,99));}
+			//~ else if (kapalXPosition>120 && kapalYPosition >319) {  //kanan
+				//~ kapalLines=drawKapal(&canvas,coord(kapalXPosition -= -kapalVelocity,kapalYPosition),rgb(99,99,99));}
+			//~ else if (kapalXPosition >235 && kapalYPosition<51){ //kiri 
+				//~ kapalLines=drawKapal(&canvas,coord(kapalXPosition -= kapalVelocity,kapalYPosition),rgb(99,99,99));}
+			//~ else {kapalLines=drawKapalVertikal(&canvas,coord(kapalXPosition,kapalYPosition -= -kapalVelocity),rgb(99,99,99));} //bawah
+		//~ allLines.insert(allLines.end(), kapalLines.begin(), kapalLines.end());
+		//~ 
+		//~ allLines.insert(allLines.end(), mapLines.begin(), mapLines.end());
+		//~ allLines.insert(allLines.end(), heliLines.begin(), heliLines.end());		
+		//~ 
+		//~ //Draw window and get cropped lines								//100 = 1/2 size window
+		//~ croppedLines = cohen_sutherland(&canvas, allLines, windowLocation, windowSize / 2);
+		//~ 
+													//~ //200 = size window
+		//~ viewPort(&canvas, viewportOrigin, viewportSize, windowSize, croppedLines);		
+		//~ 
+		//~ if (planeXPosition <= -15) {
+			//~ planeXPosition = canvasWidth+15;
+		//~ }
+		//~ 
+		//~ if (xPlode == 1) {
+			//~ mul = 1;
+			//~ xPlode = 0;
+			//~ xPlodeLocation = windowLocation;
+		//~ }
+		//~ 
+		//~ animateExplosion(&canvas, mul, xPlodeLocation);
+		//~ 
+		//~ if (mul == 21) {
+			//~ mul = 0;
+			//~ xPlode = 0;
+			//~ xPlodeLocation = coord(0,0);
+		//~ }
+		//~ if (mul >= 1) {
+			//~ mul++;
+		//~ }
 
 		//show frame
 		showFrame(&cFrame,&fb);	
