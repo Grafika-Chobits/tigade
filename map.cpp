@@ -270,14 +270,6 @@ int main() {
 		printf ("Error: failed to map framebuffer device to memory.\n");
 		exit(4);
 	}
-	
-	// prepare mouse controller
-	FILE *fmouse;
-	char mouseRaw[3];
-	fmouse = fopen("/dev/input/mice","r");
-	Coord mouse; // mouse internal counter
-	mouse.x = 0;
-	mouse.y = 0;
 		
 	// prepare environment controller
 	unsigned char loop = 1; // frame loop controller
@@ -382,6 +374,6 @@ int main() {
 	pthread_join(pth,NULL);
 	munmap(fb.ptr, sInfo.smem_len);
 	close(fbFile);
-	fclose(fmouse);
+	
 	return 0;
 }
