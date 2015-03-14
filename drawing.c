@@ -20,58 +20,6 @@ void drawFreeSquare(Frame *frm, Coord kiriAtas, Coord kananAtas, Coord kiriBawah
 	plotLine(frm, kiriAtas.x, kiriAtas.y, kiriBawah.x, kiriBawah.y, color);
 }
 
-std::vector<Line> drawBalok(Frame *frm, Balok balok, RGB color)
-{
-	Coord frontLeftUp, frontLeftDown, frontRightUp, frontRightDown, 
-			backLeftUp, backLeftDown, backRightUp, backRightDown;
-
-	std::vector<Line> balokLine;
-
-	int delta = 20;
-	//DepanKiriAtas
-	frontLeftUp.x 	= balok.center.x - (balok.panjang / 2);
-	frontLeftUp.y 	= balok.center.y - (balok.tinggi / 2);
-	
-	//DepanKiriBawah
-	frontLeftDown.x = balok.center.x - (balok.panjang / 2);
-	frontLeftDown.y = balok.center.y + (balok.tinggi / 2);
-	
-	//DepanKananAtas
-	frontRightUp.x 	= balok.center.x + (balok.panjang / 2);
-	frontRightUp.y 	= balok.center.y - (balok.tinggi / 2);
-
-	//DepanKananBawah
-	frontRightDown.x = balok.center.x + (balok.panjang / 2);
-	frontRightDown.x = balok.center.x + (balok.tinggi / 2);
-
-	//BelakangKiriAtas
-	backLeftUp.x 	= balok.center.x - (balok.panjang / 2) + delta;
-	backLeftUp.y 	= balok.center.y - (balok.tinggi / 2) - delta;
-	
-	//BelakangKiriBawah
-	backLeftDown.x = balok.center.x - (balok.panjang / 2) + delta;
-	backLeftDown.y = balok.center.y + (balok.tinggi / 2) - delta;
-	
-	//BelakangKananAtas
-	backRightUp.x 	= balok.center.x + (balok.panjang / 2) + delta;
-	backRightUp.y 	= balok.center.y - (balok.tinggi / 2) - delta;
-
-	//BelakangKananBawah
-	backRightDown.x = balok.center.x + (balok.panjang / 2) + delta;
-	backRightDown.x = balok.center.x + (balok.tinggi / 2) - delta;
-
-	//Gambar garis - garis front
-	plotLine(frm, frontLeftUp.x, frontLeftUp.y, frontRightUp.x, frontRightUp.y, color);
-	balokLine.push_back(line(coord(frontLeftUp.x, frontLeftUp.y), coord(frontRightUp.x, frontRightUp.y)));
-	plotLine(frm, frontRightUp.x, frontRightUp.y, frontRightDown.x, frontRightDown.y, color);
-	balokLine.push_back(line(coord(frontRightUp.x, frontRightUp.y), coord(frontRightDown.x, frontRightDown.y)));
-	plotLine(frm, frontRightDown.x, frontRightDown.y, frontLeftDown.x, frontLeftDown.y, color);
-	balokLine.push_back(line(coord(frontRightDown.x, frontRightDown.y), coord(frontLeftDown.x, frontLeftDown.y)));
-	plotLine(frm, frontLeftUp.x, frontLeftUp.y, frontLeftDown.x, frontLeftDown.y, color);
-	balokLine.push_back(line(coord(frontLeftUp.x, frontLeftUp.y), coord(frontLeftDown.x, frontLeftDown.y)));
-
-	return balokLine;
-}
 std::vector<Line> drawKapal(Frame *frm, Coord loc, RGB color){
 	plotLine(frm,loc.x-15,loc.y-10,loc.x+15,loc.y-10,color);
 	plotLine(frm,loc.x-15,loc.y+10,loc.x+15,loc.y+10,color);
@@ -614,6 +562,21 @@ std::vector<Line> rotateBaling(Frame *frm,Coord loc, RGB col ,int counter ){
 	x4=temp;
 	balingLine=drawBaling(frm,loc,x1,x2,x3,x4,y1,y2,y3,y4,col);
 	return balingLine;
+}
+
+void drawBlock(Frame *frm, Block block, Coord3d cameraPosition, int screenWidth, int screenHeight, RGB color){
+	std::vector<Line> lines = perspectiveProjection(block, cameraPosition);
+	int halfScreenWidth = screenWidth / 2;
+	int halfScreenHeight = screenHeight / 2;
+	
+	for(int i = 0; i < lines.size(); i++){
+		int startX = lines.at(i).start.x + halfScreenWidth;
+		int startY = lines.at(i).start.y + halfScreenHeight;
+		int endX = lines.at(i).end.x + halfScreenWidth;
+		int endY = lines.at(i).end.y + halfScreenHeight;
+		
+		plotLine(frm, startX, startY, endX, endY, color);
+	}
 }
 
 
