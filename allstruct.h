@@ -86,7 +86,7 @@ std::vector<Line> perspectiveProjection(Block block, Coord3d cameraPosition);
 
 std::vector<Coord3d> perspectiveTransformation(std::vector<Coord3d> threeDimensionalCoordinates, Coord3d cameraPosition);
 
-std::vector<Coord> worldToScreenSpace(std::vector<Coord3d> threeDimensionalCoordinates);
+std::vector<Coord> worldToScreenCoordinates(std::vector<Coord3d> threeDimensionalCoordinates, Coord3d cameraPosition);
 
 std::vector<Line> createBlockLines(std::vector<Coord> twoDimensionalCoordinates);
 

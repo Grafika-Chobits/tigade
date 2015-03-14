@@ -44,7 +44,7 @@ Block block(Coord3d _origin, int _length, int _width, int _height){
 std::vector<Line> perspectiveProjection(Block block, Coord3d cameraPosition){
 	std::vector<Coord3d> threeDimensionalCoordinates = createBlockCoordinates(block);
 	std::vector<Coord3d> transformedCoordinates = perspectiveTransformation(threeDimensionalCoordinates, cameraPosition);
-	std::vector<Coord> twoDimensionalCoordinates = worldToScreenSpace(transformedCoordinates);
+	std::vector<Coord> twoDimensionalCoordinates = worldToScreenCoordinates(transformedCoordinates, cameraPosition);
 	std::vector<Line> blockLines = createBlockLines(twoDimensionalCoordinates);
 	
 	return blockLines;	
@@ -91,12 +91,23 @@ std::vector<Coord3d> createBlockCoordinates(Block block){
 	return threeDimensionalCoordinates;
 }
 
-std::vector<Coord> worldToScreenSpace(std::vector<Coord3d> threeDimensionalCoordinates){
+std::vector<Coord> worldToScreenCoordinates(std::vector<Coord3d> threeDimensionalCoordinates, Coord3d cameraPosition){
 	std::vector<Coord> twoDimensionalCoordinates;
 	
 	for(int i = 0; i < threeDimensionalCoordinates.size(); i++){
-		int x = round(-((double)threeDimensionalCoordinates.at(i).x / (double)threeDimensionalCoordinates.at(i).z) * (double)std::abs(threeDimensionalCoordinates.at(i).x));
-		int y = round(-((double)threeDimensionalCoordinates.at(i).y / (double)threeDimensionalCoordinates.at(i).z) * (double)std::abs(threeDimensionalCoordinates.at(i).y));
+		int x, y;
+		if(threeDimensionalCoordinates.at(i).z == 0){
+			x = round(((double)threeDimensionalCoordinates.at(i).x) * (double)cameraPosition.z - (double)cameraPosition.x);
+			y = -round(((double)threeDimensionalCoordinates.at(i).y) * (double)cameraPosition.z - (double)cameraPosition.y);
+		}else{
+			if(threeDimensionalCoordinates.at(i).z < 0){
+				x = round(-((double)threeDimensionalCoordinates.at(i).x / (double)threeDimensionalCoordinates.at(i).z) * (double)cameraPosition.z - (double)cameraPosition.x);
+				y = -round(-((double)threeDimensionalCoordinates.at(i).y / (double)threeDimensionalCoordinates.at(i).z) * (double)cameraPosition.z - (double)cameraPosition.y);
+			}else{
+				x = round(((double)threeDimensionalCoordinates.at(i).x / (double)threeDimensionalCoordinates.at(i).z) * (double)cameraPosition.z - (double)cameraPosition.x);
+				y = -round(((double)threeDimensionalCoordinates.at(i).y / (double)threeDimensionalCoordinates.at(i).z) * (double)cameraPosition.z - (double)cameraPosition.y);
+			}
+		}
 		twoDimensionalCoordinates.push_back(coord(x, y));
 	}
 	

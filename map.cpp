@@ -201,9 +201,11 @@ void animateExplosion(Frame* frame, int explosionMul, Coord loc){
 }
 
 /* GLOBALVAR DECLARATIONS ----------------------------------------------- */
- 
-int cameraX = 250;
-int cameraY = 250;
+
+int canvasWidth = 1300;
+int canvasHeight = 700;
+int cameraX = 0;
+int cameraY = 0;
 int running = 1;
 
 
@@ -214,8 +216,10 @@ void *threadFunc(void *arg)
     char b[3];
 	fmouse = fopen("/dev/input/mice","r");
     while(1){
+		fread(b,sizeof(char),3,fmouse);
+		
 		cameraX = cameraX + b[1];
-		cameraY = cameraY - b[2];
+		cameraY = cameraY + b[2];
     }
     fclose(fmouse);
 	return NULL;
@@ -264,8 +268,6 @@ int main() {
 	// prepare canvas
 	Frame canvas;
 	flushFrame(&canvas, rgb(0,0,0));
-	int canvasWidth = 1300;
-	int canvasHeight = 700;
 	Coord canvasPosition = coord(screenX/2,screenY/2);
 		
 	pthread_t pth;
@@ -281,9 +283,14 @@ int main() {
 		flushFrame(&canvas, rgb(0,0,0));
 		
 		// create 3d block
-		cout << "camera: " << cameraX << " , " << cameraY << endl;
-		drawBlock(&canvas, block(coord3d(200,200,200), 100, 100, 100), coord3d(cameraX, cameraY, 300), canvasWidth, canvasHeight, rgb(99,99,99));
-
+		drawBlock(&canvas, block(coord3d(100,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), canvasWidth, canvasHeight, rgb(99,99,99));
+		drawBlock(&canvas, block(coord3d(100,100,210), 100, 100, 100), coord3d(cameraX, cameraY, 500), canvasWidth, canvasHeight, rgb(99,99,99));
+		drawBlock(&canvas, block(coord3d(210,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), canvasWidth, canvasHeight, rgb(99,99,99));
+		
+		drawBlock(&canvas, block(coord3d(-100,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), canvasWidth, canvasHeight, rgb(99,99,99));
+		drawBlock(&canvas, block(coord3d(-100,100,210), 100, 100, 100), coord3d(cameraX, cameraY, 500), canvasWidth, canvasHeight, rgb(99,99,99));
+		drawBlock(&canvas, block(coord3d(-210,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), canvasWidth, canvasHeight, rgb(99,99,99));
+		
 		//show frame
 		showFrame(&cFrame,&fb);	
 	}
