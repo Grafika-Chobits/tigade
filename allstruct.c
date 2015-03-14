@@ -16,6 +16,16 @@ Line line(Coord start, Coord end) {
 	return retval;
 }
 
+Balok balok(Coord _center, int _panjang, int _lebar, int _tinggi){
+	Balok retval;
+	retval.center.x = _center.x;
+	retval.center.y = _center.y;
+	panjang = _panjang;
+	lebar = _lebar;
+	tinggi = _tinggi;
+	return retval;
+}
+
 unsigned char isInBound(Coord position, Coord corner1, Coord corner2) {
 	unsigned char xInBound = 0;
 	unsigned char yInBound = 0;

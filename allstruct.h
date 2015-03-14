@@ -52,8 +52,18 @@ typedef struct s_frameBuffer {
 	int bpp;
 } FrameBuffer;
 
+
+//Tipe data kubus
+typedef struct s_balok{
+	Coord center;
+	int panjang;
+	int lebar;
+	int tinggi;
+}Balok;
+	
 Coord coord(int x, int y);
 Line line(Coord start, Coord end);
+Balok balok(Coord _center, int _panjang, int _lebar, int _tinggi);
 unsigned char isInBound(Coord position, Coord corner1, Coord corner2);
 
 #endif
