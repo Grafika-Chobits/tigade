@@ -12,6 +12,14 @@ void drawSquare (Frame *frm, Coord kiriAtas, Coord kananBawah, RGB color)
 	plotLine(frm, kiriAtas.x, kananBawah.y, kananBawah.x, kananBawah.y, color);
 }
 
+void drawFreeSquare(Frame *frm, Coord kiriAtas, Coord kananAtas, Coord kiriBawah, Coord kananBawah, RGB color)
+{
+	plotLine(frm, kiriAtas.x, kiriAtas.y, kananAtas.x, kananAtas.y, color);
+	plotLine(frm, kananAtas.x, kananAtas.y, kananBawah.x, kananBawah.y, color);
+	plotLine(frm, kananBawah.x, kananBawah.y, kiriBawah.x, kiriBawah.y, color);
+	plotLine(frm, kiriAtas.x, kiriAtas.y, kiriBawah.x, kiriBawah.y, color);
+}
+
 std::vector<Line> drawKapal(Frame *frm, Coord loc, RGB color){
 	plotLine(frm,loc.x-15,loc.y-10,loc.x+15,loc.y-10,color);
 	plotLine(frm,loc.x-15,loc.y+10,loc.x+15,loc.y+10,color);
