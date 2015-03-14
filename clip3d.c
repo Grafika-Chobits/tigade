@@ -18,7 +18,7 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 	// printf("kiriAtas.x = %d\n", kiriAtas.x);
 	// printf("kiriBawah.x = %d\n", kiriBawah.x);
 	if(kiriAtas.x == kiriBawah.x && kananAtas.x == kananBawah.x){
-		// printf("masuk checking x biasa\n");
+		printf("masuk checking x biasa\n");
 		xmin = kiriAtas.x;
 		xmax = kananAtas.x;
 		if(x<xmin)
@@ -28,7 +28,7 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 	}
 	else
 	{
-		// printf("masuk else x\n");
+		printf("masuk else x\n");
 		xmin = kiriAtas.x > kiriBawah.x? kiriAtas.x:kiriBawah.x;
 		ymin = kiriAtas.x > kiriBawah.x? kiriAtas.y:kiriBawah.y;
 		xmax = kananAtas.x < kananBawah.x? kananAtas.x:kananBawah.x;
@@ -45,9 +45,14 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 		else if(x > xmax)
 		{
 			m = (kananBawah.y - kananAtas.y) / (kananBawah.x - kananAtas.x);
-			// printf("m dengan x > xmax = %f\n", m);
-			int xPotong = round(m * (y - ymax) + xmax);
-			if(x > xPotong)
+			printf("m dengan x > xmax = %f\n", m);
+			// int xPotong = round(m * (y - ymax) + xmax);
+			int xPotong = round( ((y - ymax) / m) + xmax );
+			printf("y = %d\n", y);
+			printf("ymax = %d\n", ymax);
+			printf("xmax = %d\n", xmax);
+			printf("xPotong = %d\n", xPotong);
+			if(x > xPotong) // xPotong = 1200, x = 700
 			{
 				oc|=RIGHT;
 			}
@@ -95,7 +100,7 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 		}
 		
 	}
-	// printf("oc = %d\n", oc);
+	printf("oc = %d\n", oc);
 	return oc;
 }
 
@@ -152,8 +157,16 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 				}
 				else if(ot & RIGHT)		// point is to the right of clip rectangle
 				{
-					x=xmax1;
-					y = y1 + (xmax1 - x1) * (y2 - y1) / (x2 - x1);
+					if(kiriAtas.x == kiriBawah.x && kananAtas.x == kananBawah.x)
+						x=xmax1;
+					else
+					{
+						float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+						float m2 = ((float)kananBawah.y - (float)kananAtas.y) / ((float)kananBawah.x - (float)kananAtas.x);
+						x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
+						printf("x = %d\n", x);
+					}
+					y = y1 + (x - x1) * (y2 - y1) / (x2 - x1);
 				}
 				else if(ot & LEFT)		// point is to the left of clip rectangle
 				{
