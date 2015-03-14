@@ -19,6 +19,6 @@ void drawSquare (Frame *frm, Coord kiriAtas, Coord KananBawah, RGB color);
 void drawFreeSquare(Frame *frm, Coord kiriAtas, Coord kananAtas, Coord kiriBawah, Coord kananBawah, RGB color);
 
 void drawSquare(Frame *frm, Coord kiriAtas, Coord KananBawah, RGB color);
-void drawBlock(Frame *frm, Block block, Coord3d cameraPosition, int screenWidth, int screenHeight, RGB color);
+void drawBlock(Frame *frm, Block block, Coord3d cameraPosition, int angleX, int angleY, int screenWidth, int screenHeight, RGB color);
 
 #endif

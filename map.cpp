@@ -200,21 +200,41 @@ void animateExplosion(Frame* frame, int explosionMul, Coord loc){
 	drawExplosion(frame, loc, explosionMul, rgb(explosionR, 0, 0));
 }
 
+static struct termios old, new1;
+void initTermios(int echo) {
+    tcgetattr(0, &old); /* grab old terminal i/o settings */
+    new1 = old; /* make new settings same as old settings */
+    new1.c_lflag &= ~ICANON; /* disable buffered i/o */
+    new1.c_lflag &= echo ? ECHO : ~ECHO; /* set echo mode */
+    tcsetattr(0, TCSANOW, &new1); /* use these new terminal i/o settings now */
+}
+
+/* Restore old terminal i/o settings */
+void resetTermios(void) {
+    tcsetattr(0, TCSANOW, &old);
+}
+
 /* GLOBALVAR DECLARATIONS ----------------------------------------------- */
 
 int canvasWidth = 1300;
 int canvasHeight = 700;
+
 int cameraX = 0;
 int cameraY = 0;
+
+int angleX = 0;
+int angleY = 0;
+
 int running = 1;
 
 
 /* VIEW CONTROLLER ------------------------------------------------- */
-void *threadFunc(void *arg)
+void *threadFuncMouse(void *arg)
 {
 	FILE *fmouse;
     char b[3];
 	fmouse = fopen("/dev/input/mice","r");
+	
     while(1){
 		fread(b,sizeof(char),3,fmouse);
 		
@@ -222,6 +242,37 @@ void *threadFunc(void *arg)
 		cameraY = cameraY + b[2];
     }
     fclose(fmouse);
+
+	return NULL;
+}
+
+void *threadFuncKeyboard(void *arg)
+{
+	char c;
+    initTermios(0);    
+	
+    while(1){
+		read(0, &c, 1); 
+		if(c == 97){
+			angleY--;
+		}
+		
+		if(c == 100){
+			angleY++;
+		}
+		
+		if(c == 119){
+			angleX--;
+		}
+		
+		if(c == 115){
+			angleX++;
+		}
+		
+    }
+
+    resetTermios();
+    
 	return NULL;
 }
 
@@ -270,8 +321,11 @@ int main() {
 	flushFrame(&canvas, rgb(0,0,0));
 	Coord canvasPosition = coord(screenX/2,screenY/2);
 		
-	pthread_t pth;
-	pthread_create(&pth,NULL,threadFunc,NULL);
+	pthread_t pth_mouse;
+	pthread_create(&pth_mouse,NULL,threadFuncMouse,NULL);
+	
+	pthread_t pth_keyboard;
+	pthread_create(&pth_keyboard,NULL,threadFuncKeyboard,NULL);
 	
 	while (loop) {
 		// clean composition frame
@@ -283,13 +337,13 @@ int main() {
 		flushFrame(&canvas, rgb(0,0,0));
 		
 		// create 3d block
-		drawBlock(&canvas, block(coord3d(100,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), canvasWidth, canvasHeight, rgb(99,99,99));
-		drawBlock(&canvas, block(coord3d(100,100,210), 100, 100, 100), coord3d(cameraX, cameraY, 500), canvasWidth, canvasHeight, rgb(99,99,99));
-		drawBlock(&canvas, block(coord3d(210,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), canvasWidth, canvasHeight, rgb(99,99,99));
+		drawBlock(&canvas, block(coord3d(100,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), angleX, angleY, canvasWidth, canvasHeight, rgb(99,99,99));
+		drawBlock(&canvas, block(coord3d(100,100,210), 100, 100, 100), coord3d(cameraX, cameraY, 500), angleX, angleY, canvasWidth, canvasHeight, rgb(99,99,99));
+		drawBlock(&canvas, block(coord3d(210,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), angleX, angleY, canvasWidth, canvasHeight, rgb(99,99,99));
 		
-		drawBlock(&canvas, block(coord3d(-100,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), canvasWidth, canvasHeight, rgb(99,99,99));
-		drawBlock(&canvas, block(coord3d(-100,100,210), 100, 100, 100), coord3d(cameraX, cameraY, 500), canvasWidth, canvasHeight, rgb(99,99,99));
-		drawBlock(&canvas, block(coord3d(-210,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), canvasWidth, canvasHeight, rgb(99,99,99));
+		drawBlock(&canvas, block(coord3d(-200,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), angleX, angleY, canvasWidth, canvasHeight, rgb(99,99,99));
+		drawBlock(&canvas, block(coord3d(-200,100,210), 100, 100, 100), coord3d(cameraX, cameraY, 500), angleX, angleY, canvasWidth, canvasHeight, rgb(99,99,99));
+		drawBlock(&canvas, block(coord3d(-310,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), angleX, angleY, canvasWidth, canvasHeight, rgb(99,99,99));
 		
 		//show frame
 		showFrame(&cFrame,&fb);	
@@ -297,8 +351,12 @@ int main() {
 
 	/* Cleanup --------------------------------------------------------- */
 	int running= 0;
-	pthread_join(pth,NULL);
+	
+	pthread_join(pth_mouse,NULL);
+	pthread_join(pth_keyboard,NULL);
+	
 	munmap(fb.ptr, sInfo.smem_len);
 	close(fbFile);
+	
 	return 0;
 }

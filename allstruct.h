@@ -82,9 +82,9 @@ Block block(Coord3d _origin, int _length, int _width, int _height);
 
 std::vector<Coord3d> createBlockCoordinates(Block block);
 
-std::vector<Line> perspectiveProjection(Block block, Coord3d cameraPosition);
+std::vector<Line> perspectiveProjection(Block block, Coord3d cameraPosition, int angleX, int angleY);
 
-std::vector<Coord3d> perspectiveTransformation(std::vector<Coord3d> threeDimensionalCoordinates, Coord3d cameraPosition);
+std::vector<Coord3d> perspectiveTransformation(std::vector<Coord3d> threeDimensionalCoordinates, Coord3d cameraPosition, int angleX, int angleY);
 
 std::vector<Coord> worldToScreenCoordinates(std::vector<Coord3d> threeDimensionalCoordinates, Coord3d cameraPosition);
 

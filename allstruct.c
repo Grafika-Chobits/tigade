@@ -41,23 +41,31 @@ Block block(Coord3d _origin, int _length, int _width, int _height){
 	return retval;
 }
 
-std::vector<Line> perspectiveProjection(Block block, Coord3d cameraPosition){
+std::vector<Line> perspectiveProjection(Block block, Coord3d cameraPosition, int angleX, int angleY){
 	std::vector<Coord3d> threeDimensionalCoordinates = createBlockCoordinates(block);
-	std::vector<Coord3d> transformedCoordinates = perspectiveTransformation(threeDimensionalCoordinates, cameraPosition);
+	std::vector<Coord3d> transformedCoordinates = perspectiveTransformation(threeDimensionalCoordinates, cameraPosition, angleX, angleY);
 	std::vector<Coord> twoDimensionalCoordinates = worldToScreenCoordinates(transformedCoordinates, cameraPosition);
 	std::vector<Line> blockLines = createBlockLines(twoDimensionalCoordinates);
 	
 	return blockLines;	
 }
 
-std::vector<Coord3d> perspectiveTransformation(std::vector<Coord3d> threeDimensionalCoordinates, Coord3d cameraPosition){
+std::vector<Coord3d> perspectiveTransformation(std::vector<Coord3d> threeDimensionalCoordinates, Coord3d cameraPosition, int angleX, int angleY){
 	std::vector<Coord3d> transformedCoordinates;
 	
 	for(int i = 0; i < threeDimensionalCoordinates.size(); i++){
-		int x = threeDimensionalCoordinates.at(i).x - cameraPosition.x;
-		int y = threeDimensionalCoordinates.at(i).y - cameraPosition.y;
-		int z = threeDimensionalCoordinates.at(i).z - cameraPosition.z;
-		transformedCoordinates.push_back(coord3d(x, y, z));
+		float x = threeDimensionalCoordinates.at(i).x - cameraPosition.x;
+		float y = threeDimensionalCoordinates.at(i).y - cameraPosition.y;
+		float z = threeDimensionalCoordinates.at(i).z - cameraPosition.z;
+		
+		float xRadian = (float)angleX * PI / float(180);
+		float yRadian = (float)angleY * PI / float(180);
+		
+		int dx = round(std::cos(yRadian) * x - std::sin(yRadian) * z);
+		int dy = round(std::sin(xRadian) * (std::cos(yRadian) * z + std::sin(yRadian) * x) + std::cos(xRadian) * y);
+		int dz = round(std::cos(xRadian) * (std::cos(yRadian) * z + std::sin(yRadian) * x) - std::sin(xRadian) * y);
+		
+		transformedCoordinates.push_back(coord3d(dx, dy, dz));
 	}
 	
 	return transformedCoordinates;
@@ -91,27 +99,27 @@ std::vector<Coord3d> createBlockCoordinates(Block block){
 	return threeDimensionalCoordinates;
 }
 
-std::vector<Coord> worldToScreenCoordinates(std::vector<Coord3d> threeDimensionalCoordinates, Coord3d cameraPosition){
-	std::vector<Coord> twoDimensionalCoordinates;
+std::vector<Coord> worldToScreenCoordinates(std::vector<Coord3d> threeDimCoordinates, Coord3d cameraPosition){
+	std::vector<Coord> twoDimCoordinates;
 	
-	for(int i = 0; i < threeDimensionalCoordinates.size(); i++){
+	for(int i = 0; i < threeDimCoordinates.size(); i++){
 		int x, y;
-		if(threeDimensionalCoordinates.at(i).z == 0){
-			x = round(((double)threeDimensionalCoordinates.at(i).x) * (double)cameraPosition.z - (double)cameraPosition.x);
-			y = -round(((double)threeDimensionalCoordinates.at(i).y) * (double)cameraPosition.z - (double)cameraPosition.y);
+		if(threeDimCoordinates.at(i).z == 0){
+			x = round(((double)threeDimCoordinates.at(i).x) * (double)cameraPosition.z - (double)cameraPosition.x);
+			y = -round(((double)threeDimCoordinates.at(i).y) * (double)cameraPosition.z - (double)cameraPosition.y);
 		}else{
-			if(threeDimensionalCoordinates.at(i).z < 0){
-				x = round(-((double)threeDimensionalCoordinates.at(i).x / (double)threeDimensionalCoordinates.at(i).z) * (double)cameraPosition.z - (double)cameraPosition.x);
-				y = -round(-((double)threeDimensionalCoordinates.at(i).y / (double)threeDimensionalCoordinates.at(i).z) * (double)cameraPosition.z - (double)cameraPosition.y);
+			if(threeDimCoordinates.at(i).z < 0){
+				x = round(-((double)threeDimCoordinates.at(i).x / (double)threeDimCoordinates.at(i).z) * (double)cameraPosition.z - (double)cameraPosition.x);
+				y = -round(-((double)threeDimCoordinates.at(i).y / (double)threeDimCoordinates.at(i).z) * (double)cameraPosition.z - (double)cameraPosition.y);
 			}else{
-				x = round(((double)threeDimensionalCoordinates.at(i).x / (double)threeDimensionalCoordinates.at(i).z) * (double)cameraPosition.z - (double)cameraPosition.x);
-				y = -round(((double)threeDimensionalCoordinates.at(i).y / (double)threeDimensionalCoordinates.at(i).z) * (double)cameraPosition.z - (double)cameraPosition.y);
+				x = round(((double)threeDimCoordinates.at(i).x / (double)threeDimCoordinates.at(i).z) * (double)cameraPosition.z - (double)cameraPosition.x);
+				y = -round(((double)threeDimCoordinates.at(i).y / (double)threeDimCoordinates.at(i).z) * (double)cameraPosition.z - (double)cameraPosition.y);
 			}
 		}
-		twoDimensionalCoordinates.push_back(coord(x, y));
+		twoDimCoordinates.push_back(coord(x, y));
 	}
 	
-	return twoDimensionalCoordinates;
+	return twoDimCoordinates;
 }
 
 std::vector<Line> createBlockLines(std::vector<Coord> twoDimensionalCoordinates){
