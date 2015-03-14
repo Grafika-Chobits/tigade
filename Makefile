@@ -10,7 +10,7 @@ CFLAGS  = -g
 TARGET = main
 
 $(TARGET): map.cpp
-	$(CC) -o $(TARGET) map.cpp allstruct.c cursor.c video.c plotting.c rotasi.c drawing.c clip.c -lpthread
+	$(CC) -o $(TARGET) map.cpp allstruct.c cursor.c video.c plotting.c rotasi.c drawing.c clip.c colorpicker.c -lpthread -lm
 	./$(TARGET)
 
 clean:

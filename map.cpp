@@ -20,6 +20,7 @@
 #include "rotasi.h"
 #include "drawing.h"
 #include "clip.h"
+#include "colorpicker.h"
 #include <pthread.h>
 
 using namespace std;
@@ -270,6 +271,14 @@ int main() {
 		printf ("Error: failed to map framebuffer device to memory.\n");
 		exit(4);
 	}
+	
+	// prepare mouse controller
+	FILE *fmouse;
+	char mouseRaw[3];
+	fmouse = fopen("/dev/input/mice","r");
+	Coord mouse; // mouse internal counter
+	mouse.x = 0;
+	mouse.y = 0;
 		
 	// prepare environment controller
 	unsigned char loop = 1; // frame loop controller
@@ -277,7 +286,6 @@ int main() {
 	
 	// prepare canvas
 	Frame canvas;
-	flushFrame(&canvas, rgb(0,0,0));
 	int canvasWidth = 1300;
 	int canvasHeight = 700;
 	Coord canvasPosition = coord(screenX/2,screenY/2);
@@ -286,6 +294,79 @@ int main() {
 	int viewportSize = 300;
 	Coord viewportOrigin = coord(999, 399);
 	
+	// colorpicker initial properties
+	flushFrame(&canvas, rgb(255,255,255)); // prepare canvas
+	unsigned short hue = 0; //the hue location, 0..768
+	unsigned char sat = 0; //saturation, 0..255
+	unsigned char lum = 0; //luminosity, 0..255
+	RGB colorValue; // user-selected RGB value
+
+	// colorpicker
+	while (loop) {
+		float trigonoLen;
+		int i; //for drawing.
+
+		//calc color value
+		colorValue = getColorValue(hue, sat, lum);
+		
+		//clean
+		flushFrame(&cFrame, rgb(0,0,0));
+		
+		//hue selector
+		showHueSelector(&cFrame, coord(299,50), hue);
+			
+		//saturation and lightness selector
+		showSlSelector(&cFrame, coord(299,120), hue, sat, lum);
+		
+		//show selected
+		showSelectedColor(&cFrame, coord(299,400), colorValue);
+		
+		//show canvas
+		showCanvas(&cFrame, &canvas, 487, 330, coord(299+256+(487/2)+26,120+(330/2)), rgb(99,99,99), 1);
+
+		//fill mouse LAST
+		insertSprite(&cFrame, getCursorCoord(&mouse), 1);
+		
+		//show frame
+		showFrame(&cFrame,&fb);
+		
+		//read next mouse
+		fread(mouseRaw,sizeof(char),3,fmouse);
+		mouse.x += mouseRaw[1];
+		mouse.y -= mouseRaw[2];
+        
+        
+        if ((mouseRaw[0]&1)>0) { //if Lbutton press
+			
+			//in hue selector
+			if (isInBound(getCursorCoord(&mouse),coord(299,50), coord(1066,100))) {
+				hue = getCursorCoord(&mouse).x-299;
+				printf("r: %d, g: %d, b: %d\n", colorValue.r, colorValue.g, colorValue.b);
+			}
+			
+			//in sl selector
+			if (isInBound(getCursorCoord(&mouse),coord(299,120), coord(555,376))) {
+				sat = getCursorCoord(&mouse).y-120;
+				lum = getCursorCoord(&mouse).x-299;
+				printf("r: %d, g: %d, b: %d\n", colorValue.r, colorValue.g, colorValue.b);
+			}
+			
+			//in canvas
+			if (isInBound(getCursorCoord(&mouse),coord(580,120), coord(1067,450))) {
+				trigonoLen = sqrt((float)pow(mouseRaw[1],2)+(float)pow(mouseRaw[2],2));
+				for (i=0; i<=trigonoLen; i++) {
+					addBlob(&canvas, coord(getCursorCoord(&mouse).x-580-(mouseRaw[1]*i/trigonoLen), getCursorCoord(&mouse).y-120+(mouseRaw[2]*i/trigonoLen)), colorValue);
+				}
+			}
+
+			// in selected color box
+			if(isInBound(getCursorCoord(&mouse), coord(299,400), coord(299+256, 400+50)))
+				loop = 0;
+		}
+	}
+
+	loop = 1;
+
 	//baling
 	int balingCounter=0;
 	int planeVelocity = 20;
@@ -308,7 +389,7 @@ int main() {
 	
 	//egg
 	int mul = 0;
-	
+	// Peta
 	while (loop) {
 		// clean composition frame
 		flushFrame(&cFrame, rgb(33,33,33));
@@ -374,6 +455,6 @@ int main() {
 	pthread_join(pth,NULL);
 	munmap(fb.ptr, sInfo.smem_len);
 	close(fbFile);
-	
+	fclose(fmouse);
 	return 0;
 }
