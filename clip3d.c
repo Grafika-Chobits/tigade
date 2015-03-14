@@ -9,34 +9,43 @@
 //BOTTOM = 	0100
 //LEFT = 	0001
 //RIGHT = 	0010
-outcode compute(int x, int y , int xmin1, int ymin1, int xmax1, int ymin2, int xmax2, int ymax2, int xmin2, int ymax1)
+//outcode compute(int x, int y , int xmin1, int ymin1, int xmax1, int ymin2, int xmax2, int ymax2, int xmin2, int ymax1)
+outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah, Coord kananBawah)
 {
 	float m;
 	outcode oc=0;
-	
-	if(xmin1 == xmin2 && xmin1 == xmin2){
-		if(x<xmin1)
+	int xmin, ymin, xmax, ymax;
+	// printf("kiriAtas.x = %d\n", kiriAtas.x);
+	// printf("kiriBawah.x = %d\n", kiriBawah.x);
+	if(kiriAtas.x == kiriBawah.x && kananAtas.x == kananBawah.x){
+		// printf("masuk checking x biasa\n");
+		xmin = kiriAtas.x;
+		xmax = kananAtas.x;
+		if(x<xmin)
 			oc|=LEFT;
-		else if(x>xmax1)
+		else if(x>xmax)
 			oc|=RIGHT;
 	}
 	else
 	{
-		int xmin = xmin1 > xmin2? xmin1:xmin2;
-		int ymin = xmin1 > xmin2? ymin1:ymin2;
-		int xmax = xmax1 < xmax2? xmax1:xmax2;
-		int ymax = xmax1 < xmax2? ymax1:ymax2;
+		// printf("masuk else x\n");
+		xmin = kiriAtas.x > kiriBawah.x? kiriAtas.x:kiriBawah.x;
+		ymin = kiriAtas.x > kiriBawah.x? kiriAtas.y:kiriBawah.y;
+		xmax = kananAtas.x < kananBawah.x? kananAtas.x:kananBawah.x;
+		ymax = kananAtas.x < kananBawah.x? kananAtas.y:kananBawah.y;
 		if(x < xmin)
 		{
-			m = (xmin2 - xmin1) / (ymax1 - ymin1);
-			//cari xPotong
+			m = (kiriBawah.y - kiriAtas.y) / (kiriBawah.x - kiriAtas.x);
+			// printf("m dengan x < xmin = %f\n", m);
+			// cari xPotong
 			int xPotong = round(m * (y - ymin) + xmin);
 			if(x < xPotong)
 				oc|=LEFT;
 		}
 		else if(x > xmax)
 		{
-			m = (xmax2 - xmax1) / (ymax2 - ymin2);
+			m = (kananBawah.y - kananAtas.y) / (kananBawah.x - kananAtas.x);
+			// printf("m dengan x > xmax = %f\n", m);
 			int xPotong = round(m * (y - ymax) + xmax);
 			if(x > xPotong)
 			{
@@ -45,22 +54,26 @@ outcode compute(int x, int y , int xmin1, int ymin1, int xmax1, int ymin2, int x
 		}
 	}
 	
-	if(ymin1 == ymin2 && ymax1 == ymax2)
+	if(kiriAtas.y == kananAtas.y && kiriBawah.y == kananBawah.y)
 	{
-		if(y<ymin1)
+		// printf("masuk checking y biasa\n");
+		ymin = kiriAtas.y;
+		ymax = kiriBawah.y;
+		if(y<ymin)
 			oc|=TOP;
-		else if(y>ymax1)
+		else if(y>ymax)
 			oc|=BOTTOM;
 	}
 	else
 	{
-		int ymin = ymin1 > ymin2? ymin1:ymin2;
-		int xmin = ymin1 > ymin2? xmin1:xmin2;
-		int ymax = ymax1 < ymax2? ymax1:ymax2;
-		int xmax = ymax1 < ymax2? xmax1:xmax2;
+		// printf("masuk else y\n");
+		ymin = kiriAtas.y > kananAtas.y? kiriAtas.y:kananAtas.y;
+		xmin = kiriAtas.y > kananAtas.y? kiriAtas.x:kananAtas.x;
+		ymax = kiriBawah.y < kananBawah.y? kiriBawah.y:kananBawah.y;
+		xmax = kiriBawah.y < kananBawah.y? kiriBawah.x:kananBawah.x;
 		if(y < ymin) 
 		{
-			m = (xmax1 - xmin1) / (ymin2 - ymin1);
+			m = (kananAtas.y - kiriAtas.y) / (kananAtas.x - kiriAtas.x);
 			//cari titik potong
 			int yPotong = round(m * (x - xmin) + ymin);
 
@@ -71,7 +84,7 @@ outcode compute(int x, int y , int xmin1, int ymin1, int xmax1, int ymin2, int x
 		}
 		else if(y > ymax)
 		{
-			m = (xmax2 - xmin2) / (ymax2 - ymax1);
+			m = (kananBawah.y - kiriBawah.y) / (kananBawah.x - kiriBawah.x);
 			//Cari titik potong
 			int yPotong = round(m * (x - xmax) + ymax);
 
@@ -82,11 +95,11 @@ outcode compute(int x, int y , int xmin1, int ymin1, int xmax1, int ymin2, int x
 		}
 		
 	}
-
+	// printf("oc = %d\n", oc);
 	return oc;
 }
 
-//Urutan kotaknya: KiriAtas, kananAtas, kiriBawah, kananBawah
+//Urutan kotaknya: kiriAtas, kananAtas, kiriBawah, kananBawah
 std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord kiriAtas, Coord kananAtas, 
 																			Coord kiriBawah, Coord kananBawah, RGB color)
 {
@@ -110,8 +123,8 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 		y2 = EndY(lines.at(i));
 		bool accept = false, done=false;double m;
 		outcode o1,o2,ot;
-		o1=compute(x1,y1, xmin1, ymin1, xmin2, ymin2, xmax1, ymax1, xmax2, ymax2);
-		o2=compute(x2,y2, xmin1, ymin1, xmin2, ymin2, xmax1, ymax1, xmax2, ymax2);
+		o1=compute(x1,y1, kiriAtas, kananAtas, kiriBawah, kananBawah);
+		o2=compute(x2,y2, kiriAtas, kananAtas, kiriBawah, kananBawah);
 		do{
 
 			if(!(o1 | o2))
@@ -152,22 +165,22 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 				{
 					x1=x;
 					y1=y;
-					o1=compute(x1,y1,xmin1, ymin1, xmin2, ymin2, xmax1, ymax1, xmax2, ymax2);
+					o1=compute(x1,y1,kiriAtas, kananAtas, kiriBawah, kananBawah);
 				}
 				else
 				{
 					x2=x;
 					y2=y;
-					o2=compute(x2,y2,xmin1, ymin1, xmin2, ymin2, xmax1, ymax1, xmax2, ymax2);
+					o2=compute(x2,y2,kiriAtas, kananAtas, kiriBawah, kananBawah);
 				}
 			}
 		}while(done==false);
 
 		if(accept==true)
 		{
-			clippedLines.push_back(line(coord(x1 - xmin1, y1 - ymin1),coord(x2 - xmin1,y2 - ymin1)));
+			clippedLines.push_back(line(coord(x1, y1),coord(x2,y2)));
 		}
-		drawFreeSquare(canvas, coord(xmin1, ymin1), coord(xmax1, ymin2), coord(xmin2, ymax1), coord(xmax2,ymax2), rgb(255,255,0));
+		drawFreeSquare(canvas, kiriAtas, kananAtas, kiriBawah, kananBawah, rgb(255,255,0));
 	}
 	return clippedLines;
 }

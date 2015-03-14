@@ -15,10 +15,10 @@ typedef int outcode;
 
 Line line(int x1, int y1, int x2, int y2);
 
-outcode compute(int x, int y , int xmin1, int ymin1, int xmin2, int ymin2, int xmax1, int ymax1, int xmax2, int ymax2);
+outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah, Coord kananBawah);
 
-std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, int xmin1, int ymin1, int xmax1, int ymin2,
-																			int xmin2, int ymax1, int xmax2, int ymax2);
+std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord kiriAtas, Coord kananAtas, 
+																			Coord kiriBawah, Coord kananBawah, RGB color);
 
 void cohen_sutherland (Frame *frm, int x1,int y1,int x2,int y2, int xmin,int ymin, int xmax, int ymax, RGB color);
 
