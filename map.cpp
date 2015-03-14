@@ -202,11 +202,9 @@ void animateExplosion(Frame* frame, int explosionMul, Coord loc){
 
 /* GLOBALVAR DECLARATIONS ----------------------------------------------- */
  
-Coord windowLocation = coord(500, 300);
-int windowSize = 100;
+int cameraX = 250;
+int cameraY = 250;
 int running = 1;
-int xPlode = 0;
-Coord xPlodeLocation = coord(0,0);
 
 
 /* VIEW CONTROLLER ------------------------------------------------- */
@@ -216,22 +214,10 @@ void *threadFunc(void *arg)
     char b[3];
 	fmouse = fopen("/dev/input/mice","r");
     while(1){
-                fread(b,sizeof(char),3,fmouse);
-                if ((b[0]&1)>0) { //leftbutton
-					windowSize += 20;
-				}
-				if ((b[0]&2)>0) { //rightbutton
-					if (windowSize>0) {
-						windowSize -= 20;
-					}
-				}
-				if ((b[0]&4)>0) { //mmb
-					xPlode = 1;
-				}
-				
-				windowLocation = coord(windowLocation.x+b[1],windowLocation.y-b[2]);
-        }
-        fclose(fmouse);
+		//cameraX += b[1];
+		//cameraY -= b[2];
+    }
+    fclose(fmouse);
 	return NULL;
 }
 
@@ -270,14 +256,6 @@ int main() {
 		printf ("Error: failed to map framebuffer device to memory.\n");
 		exit(4);
 	}
-	
-	// prepare mouse controller
-	FILE *fmouse;
-	char mouseRaw[3];
-	fmouse = fopen("/dev/input/mice","r");
-	Coord mouse; // mouse internal counter
-	mouse.x = 0;
-	mouse.y = 0;
 		
 	// prepare environment controller
 	unsigned char loop = 1; // frame loop controller
@@ -289,33 +267,9 @@ int main() {
 	int canvasWidth = 1300;
 	int canvasHeight = 700;
 	Coord canvasPosition = coord(screenX/2,screenY/2);
-	
-	// viewport properties
-	int viewportSize = 300;
-	Coord viewportOrigin = coord(999, 399);
-	
-	//baling
-	int balingCounter=0;
-	int planeVelocity = 20;
-	int planeXPosition = canvasWidth;
-	int planeYPosition = 270;
-	int kapalXPosition = 250;
-	int kapalVelocity = 15;
-	int kapalYPosition = 250;
-
-
-	vector<Line> mapLines;
-	vector<Line> heliLines;
-	vector<Line> kapalLines;
-	
-	vector<Line> allLines;
-	vector<Line> croppedLines;
 		
 	pthread_t pth;
 	pthread_create(&pth,NULL,threadFunc,NULL);
-	
-	//egg
-	int mul = 0;
 	
 	while (loop) {
 		// clean composition frame
@@ -326,52 +280,8 @@ int main() {
 		// clean canvas
 		flushFrame(&canvas, rgb(0,0,0));
 		
-		//clean vector
-		allLines.clear();
-		
-		//Nambahin Lines biar semua jadi 1
-		mapLines = drawPeta(&canvas, coord(0,0), rgb(50,150,0));
-		
-		heliLines=rotateBaling(&canvas,coord(planeXPosition -= planeVelocity,planeYPosition),rgb(255,255,255),balingCounter++);
-		
-		if(kapalXPosition>508 && kapalYPosition >50) {  //atas
-			kapalLines=drawKapalVertikal(&canvas,coord(kapalXPosition,kapalYPosition -= kapalVelocity),rgb(99,99,99));}
-			else if (kapalXPosition>120 && kapalYPosition >319) {  //kanan
-				kapalLines=drawKapal(&canvas,coord(kapalXPosition -= -kapalVelocity,kapalYPosition),rgb(99,99,99));}
-			else if (kapalXPosition >235 && kapalYPosition<51){ //kiri 
-				kapalLines=drawKapal(&canvas,coord(kapalXPosition -= kapalVelocity,kapalYPosition),rgb(99,99,99));}
-			else {kapalLines=drawKapalVertikal(&canvas,coord(kapalXPosition,kapalYPosition -= -kapalVelocity),rgb(99,99,99));} //bawah
-		allLines.insert(allLines.end(), kapalLines.begin(), kapalLines.end());
-		
-		allLines.insert(allLines.end(), mapLines.begin(), mapLines.end());
-		allLines.insert(allLines.end(), heliLines.begin(), heliLines.end());		
-		
-		//Draw window and get cropped lines								//100 = 1/2 size window
-		croppedLines = cohen_sutherland(&canvas, allLines, windowLocation, windowSize / 2);
-		
-													//200 = size window
-		viewPort(&canvas, viewportOrigin, viewportSize, windowSize, croppedLines);		
-		
-		if (planeXPosition <= -15) {
-			planeXPosition = canvasWidth+15;
-		}
-		
-		if (xPlode == 1) {
-			mul = 1;
-			xPlode = 0;
-			xPlodeLocation = windowLocation;
-		}
-		
-		animateExplosion(&canvas, mul, xPlodeLocation);
-		
-		if (mul == 21) {
-			mul = 0;
-			xPlode = 0;
-			xPlodeLocation = coord(0,0);
-		}
-		if (mul >= 1) {
-			mul++;
-		}
+		// create 3d block
+		drawBlock(&canvas, block(coord3d(200,200,200), 100, 100, 100), coord3d(cameraX, cameraY, 300), canvasWidth, canvasHeight, rgb(99,99,99));
 
 		//show frame
 		showFrame(&cFrame,&fb);	
@@ -382,6 +292,5 @@ int main() {
 	pthread_join(pth,NULL);
 	munmap(fb.ptr, sInfo.smem_len);
 	close(fbFile);
-	fclose(fmouse);
 	return 0;
 }

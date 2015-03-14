@@ -556,4 +556,19 @@ std::vector<Line> rotateBaling(Frame *frm,Coord loc, RGB col ,int counter ){
 	return balingLine;
 }
 
+void drawBlock(Frame *frm, Block block, Coord3d cameraPosition, int screenWidth, int screenHeight, RGB color){
+	std::vector<Line> lines = perspectiveProjection(block, cameraPosition);
+	int halfScreenWidth = screenWidth / 2;
+	int halfScreenHeight = screenHeight / 2;
+	
+	for(int i = 0; i < lines.size(); i++){
+		int startX = lines.at(i).start.x + halfScreenWidth;
+		int startY = lines.at(i).start.y + halfScreenHeight;
+		int endX = lines.at(i).end.x + halfScreenWidth;
+		int endY = lines.at(i).end.y + halfScreenHeight;
+		
+		plotLine(frm, startX, startY, endX, endY, color);
+	}
+}
+
 

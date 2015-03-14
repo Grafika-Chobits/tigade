@@ -1,6 +1,11 @@
 #ifndef ADDEDSTRUCT_H
 #define ADDEDSTRUCT_H
 
+#include <vector>
+#include <math.h>
+#include <cmath>
+#include <stdio.h>
+
 #define min(X,Y) (((X) < (Y)) ? (X) : (Y))
 #define max(X,Y) (((X) > (Y)) ? (X) : (Y))
 #define End(Line) Line.end
@@ -38,6 +43,13 @@ typedef struct s_coord {
 	int y;
 } Coord;
 
+//3D Coordinate System
+typedef struct s_coord3d {
+	int x;
+	int y;
+	int z;
+} Coord3d;
+
 //Line System
 typedef struct s_line {
 	Coord start;
@@ -52,18 +64,32 @@ typedef struct s_frameBuffer {
 	int bpp;
 } FrameBuffer;
 
-
 //Tipe data kubus
-typedef struct s_balok{
-	Coord center;
-	int panjang;
-	int lebar;
-	int tinggi;
-}Balok;
+typedef struct s_block{
+	Coord3d origin;
+	int length;
+	int width;
+	int height;
+}Block;
 	
 Coord coord(int x, int y);
+
+Coord3d coord3d(int x, int y, int z);
+
 Line line(Coord start, Coord end);
-Balok balok(Coord _center, int _panjang, int _lebar, int _tinggi);
+
+Block block(Coord3d _origin, int _length, int _width, int _height);
+
+std::vector<Coord3d> createBlockCoordinates(Block block);
+
+std::vector<Line> perspectiveProjection(Block block, Coord3d cameraPosition);
+
+std::vector<Coord3d> perspectiveTransformation(std::vector<Coord3d> threeDimensionalCoordinates, Coord3d cameraPosition);
+
+std::vector<Coord> worldToScreenSpace(std::vector<Coord3d> threeDimensionalCoordinates);
+
+std::vector<Line> createBlockLines(std::vector<Coord> twoDimensionalCoordinates);
+
 unsigned char isInBound(Coord position, Coord corner1, Coord corner2);
 
 #endif
