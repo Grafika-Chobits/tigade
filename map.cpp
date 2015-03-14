@@ -19,7 +19,7 @@
 #include "plotting.h"
 #include "rotasi.h"
 #include "drawing.h"
-#include "clip.h"
+#include "clip3d.h"
 #include <pthread.h>
 
 using namespace std;
@@ -307,6 +307,7 @@ int main() {
 	vector<Line> mapLines;
 	vector<Line> heliLines;
 	vector<Line> kapalLines;
+	vector<Line> oneLine;
 	
 	vector<Line> allLines;
 	vector<Line> croppedLines;
@@ -316,6 +317,11 @@ int main() {
 	
 	//egg
 	int mul = 0;
+
+	int kiri = 400;
+	int kanan = 600;
+	int atas = 400;
+	int bawah = 600;
 	
 	while (loop) {
 		// clean composition frame
@@ -325,53 +331,14 @@ int main() {
 								
 		// clean canvas
 		flushFrame(&canvas, rgb(0,0,0));
+
+		oneLine.push_back(line(coord(500,500), coord(700,450)));
+		//plotLine(&canvas, oneLine.at(0), rgb(0,255,0));
+
+		allLines = cohen_sutherland(&canvas, oneLine, coord(kiri + 50, atas), coord(kanan + 50, atas), coord(kiri, bawah), coord(kanan,bawah), rgb(0,255,0));
+		plotLine(&canvas, allLines.at(0), rgb(0,255,0));
 		
-		//clean vector
-		allLines.clear();
-		
-		//Nambahin Lines biar semua jadi 1
-		mapLines = drawPeta(&canvas, coord(0,0), rgb(50,150,0));
-		
-		heliLines=rotateBaling(&canvas,coord(planeXPosition -= planeVelocity,planeYPosition),rgb(255,255,255),balingCounter++);
-		
-		if(kapalXPosition>508 && kapalYPosition >50) {  //atas
-			kapalLines=drawKapalVertikal(&canvas,coord(kapalXPosition,kapalYPosition -= kapalVelocity),rgb(99,99,99));}
-			else if (kapalXPosition>120 && kapalYPosition >319) {  //kanan
-				kapalLines=drawKapal(&canvas,coord(kapalXPosition -= -kapalVelocity,kapalYPosition),rgb(99,99,99));}
-			else if (kapalXPosition >235 && kapalYPosition<51){ //kiri 
-				kapalLines=drawKapal(&canvas,coord(kapalXPosition -= kapalVelocity,kapalYPosition),rgb(99,99,99));}
-			else {kapalLines=drawKapalVertikal(&canvas,coord(kapalXPosition,kapalYPosition -= -kapalVelocity),rgb(99,99,99));} //bawah
-		allLines.insert(allLines.end(), kapalLines.begin(), kapalLines.end());
-		
-		allLines.insert(allLines.end(), mapLines.begin(), mapLines.end());
-		allLines.insert(allLines.end(), heliLines.begin(), heliLines.end());		
-		
-		//Draw window and get cropped lines								//100 = 1/2 size window
-		croppedLines = cohen_sutherland(&canvas, allLines, windowLocation, windowSize / 2);
-		
-													//200 = size window
-		viewPort(&canvas, viewportOrigin, viewportSize, windowSize, croppedLines);		
-		
-		if (planeXPosition <= -15) {
-			planeXPosition = canvasWidth+15;
-		}
-		
-		if (xPlode == 1) {
-			mul = 1;
-			xPlode = 0;
-			xPlodeLocation = windowLocation;
-		}
-		
-		animateExplosion(&canvas, mul, xPlodeLocation);
-		
-		if (mul == 21) {
-			mul = 0;
-			xPlode = 0;
-			xPlodeLocation = coord(0,0);
-		}
-		if (mul >= 1) {
-			mul++;
-		}
+		// drawFreeSquare(&canvas, coord(0, 0), coord(200, 0),  coord(0, 200), coord(200, 200), rgb(0,255,0));
 
 		//show frame
 		showFrame(&cFrame,&fb);	
