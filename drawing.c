@@ -556,4 +556,286 @@ std::vector<Line> rotateBaling(Frame *frm,Coord loc, RGB col ,int counter ){
 	return balingLine;
 }
 
+void drawAmmunition(Frame *frame, Coord upperBoundPosition, int ammunitionWidth, int ammunitionLength, RGB color){
+	plotLine(frame, upperBoundPosition.x, upperBoundPosition.y, upperBoundPosition.x, upperBoundPosition.y + ammunitionLength, color);
+	
+	int i;
+	for(i = 0; i < ammunitionWidth; i++){
+		plotLine(frame, upperBoundPosition.x + i, upperBoundPosition.y, upperBoundPosition.x + i, upperBoundPosition.y + ammunitionLength, color);
+		plotLine(frame, upperBoundPosition.x - i, upperBoundPosition.y, upperBoundPosition.x - i, upperBoundPosition.y + ammunitionLength, color);
+	}	
+}
 
+void drawPeluru(Frame *frame, Coord center, RGB color)
+{
+	int panjangPeluru = 10;
+	//DrawKiri
+	plotLine(frame, center.x - 3, center.y + panjangPeluru / 2, center.x -3, center.y - panjangPeluru / 2, color); 
+	
+	//DrawKanan
+	plotLine(frame, center.x + 3, center.y + panjangPeluru / 2, center.x + 3, center.y - panjangPeluru / 2, color);
+	
+	//DrawBawah
+	plotLine(frame, center.x - 3, center.y + panjangPeluru / 2, center.x +3, center.y + panjangPeluru / 2, color);
+	
+	//DrawUjungKiri
+	plotLine(frame, center.x - 3, center.y - panjangPeluru / 2, center.x, center.y - (panjangPeluru / 2 + 4), color);
+	
+	//DrawUjungKanan
+	plotLine(frame, center.x + 3, center.y - panjangPeluru / 2, center.x, center.y - (panjangPeluru / 2 + 4), color);
+}
+
+void drawPlane(Frame *frame, Coord position, RGB color) {
+
+	// Ship's relative coordinate to canvas, ship's actuator
+	int xPlaneCoordinate = position.x;
+	int yPlaneCoordinate = position.y;
+	
+	// Ship's border coordinates
+	vector<Coord>  planeCoordinates;
+	planeCoordinates.push_back(coord(0,0));
+	planeCoordinates.push_back(coord(planeCoordinates.at(0).x + 15, planeCoordinates.at(0).y-5));
+	planeCoordinates.push_back(coord(planeCoordinates.at(1).x + 30, planeCoordinates.at(1).y-3));
+	planeCoordinates.push_back(coord(planeCoordinates.at(2).x + 13, planeCoordinates.at(2).y-4));
+	planeCoordinates.push_back(coord(planeCoordinates.at(3).x + 13, planeCoordinates.at(3).y-3));
+	planeCoordinates.push_back(coord(planeCoordinates.at(4).x + 13, planeCoordinates.at(4).y+3));
+	planeCoordinates.push_back(coord(planeCoordinates.at(5).x + 13, planeCoordinates.at(5).y+4));
+	planeCoordinates.push_back(coord(planeCoordinates.at(6).x + 50, planeCoordinates.at(6).y-3));
+	planeCoordinates.push_back(coord(planeCoordinates.at(7).x + 5, planeCoordinates.at(7).y-18));
+	planeCoordinates.push_back(coord(planeCoordinates.at(8).x + 10, planeCoordinates.at(8).y-4));
+	planeCoordinates.push_back(coord(planeCoordinates.at(9).x + 3, planeCoordinates.at(9).y+27));
+	planeCoordinates.push_back(coord(planeCoordinates.at(10).x - 1, planeCoordinates.at(10).y+5));
+	planeCoordinates.push_back(coord(planeCoordinates.at(11).x + 1, planeCoordinates.at(11).y+5));
+	planeCoordinates.push_back(coord(planeCoordinates.at(12).x - 67, planeCoordinates.at(12).y+3));
+	planeCoordinates.push_back(coord(planeCoordinates.at(13).x + 13, planeCoordinates.at(13).y+25));
+	planeCoordinates.push_back(coord(planeCoordinates.at(14).x - 10, planeCoordinates.at(14).y-6));
+	planeCoordinates.push_back(coord(planeCoordinates.at(15).x - 17, planeCoordinates.at(15).y-18));
+	planeCoordinates.push_back(coord(planeCoordinates.at(16).x - 37, planeCoordinates.at(16).y-1));
+	planeCoordinates.push_back(coord(planeCoordinates.at(17).x - 27, planeCoordinates.at(17).y-3));
+	
+
+	// Draw ship's border relative to canvas
+	for(int i = 0; i < planeCoordinates.size(); i++){
+		int x0, y0, x1, y1;
+		
+		if(i < planeCoordinates.size() - 1){
+			x0 = planeCoordinates.at(i).x + xPlaneCoordinate;
+			y0 = planeCoordinates.at(i).y + yPlaneCoordinate;
+			x1 = planeCoordinates.at(i + 1).x + xPlaneCoordinate;
+			y1 = planeCoordinates.at(i + 1).y + yPlaneCoordinate;
+		}else{
+			x0 = planeCoordinates.at(planeCoordinates.size() - 1).x + xPlaneCoordinate;
+			y0 = planeCoordinates.at(planeCoordinates.size() - 1).y + yPlaneCoordinate;
+			x1 = planeCoordinates.at(0).x + xPlaneCoordinate;
+			y1 = planeCoordinates.at(0).y + yPlaneCoordinate;
+		}
+		
+		plotLine(frame, x0, y0, x1, y1, color);
+	}
+	
+	// Pattern's coordinate
+	vector<Coord> patternCoordinates = getBirdCoordinate(coord(50,-10));
+	
+}
+
+void drawBird(Frame* frm, Coord loc,RGB color){
+	plotHalfCircle(frm,loc.x,loc.y,10,color);
+	plotHalfCircle(frm,loc.x+20,loc.y,10,color);
+	plotHalfCircle(frm,loc.x,loc.y,5,color);
+	plotHalfCircle(frm,loc.x+20,loc.y,5,color);
+	plotLine(frm,loc.x+10,loc.y,loc.x+5,loc.y,color);
+	plotLine(frm,loc.x-10,loc.y,loc.x-5,loc.y,color);
+	plotLine(frm,loc.x+15,loc.y,loc.x+10,loc.y,color);
+	plotLine(frm,loc.x+25,loc.y,loc.x+30,loc.y,color);
+	}
+
+void drawExplosion(Frame *frame, Coord loc, int mult, RGB color){	
+	plotLine(frame,loc.x+10*mult,loc.y +10*mult,loc.x+20*mult,loc.y+20*mult,color);
+	plotLine(frame,loc.x-10*mult,loc.y -10*mult,loc.x-20*mult,loc.y-20*mult,color);
+	plotLine(frame,loc.x+10*mult,loc.y -10*mult,loc.x+20*mult,loc.y-20*mult,color);
+	plotLine(frame,loc.x-10*mult,loc.y +10*mult,loc.x-20*mult,loc.y+20*mult,color);
+	plotLine(frame,loc.x,loc.y -10*mult,loc.x,loc.y-20*mult,color);
+	plotLine(frame,loc.x-10*mult,loc.y,loc.x-20*mult,loc.y,color);
+	plotLine(frame,loc.x+10*mult,loc.y ,loc.x+20*mult,loc.y,color);
+	plotLine(frame,loc.x,loc.y +10*mult,loc.x,loc.y+20*mult,color);
+}
+
+void drawBomb(Frame *frame, Coord center, RGB color)
+{
+	int panjangBomb = 10;
+	//DrawKiri
+	plotLine(frame, center.x - 3, center.y + panjangBomb / 2, center.x -3, center.y - panjangBomb / 2, color); 
+	
+	//DrawKanan
+	plotLine(frame, center.x + 3, center.y + panjangBomb / 2, center.x + 3, center.y - panjangBomb / 2, color);
+	
+	//DrawAtas
+	plotLine(frame, center.x - 3, center.y - panjangBomb / 2, center.x +3, center.y - panjangBomb / 2, color);
+	
+	//DrawUjungKiri
+	plotLine(frame, center.x - 3, center.y + panjangBomb / 2, center.x, center.y + (panjangBomb / 2 + 4), color);
+	
+	//DrawUjungKanan
+	plotLine(frame, center.x + 3, center.y + panjangBomb / 2, center.x, center.y + (panjangBomb / 2 + 4), color);
+}
+
+void drawShip(Frame *frame, Coord center, RGB color)
+{
+	// Ship's attributes
+	int panjangDekBawah = 100;
+	int deltaDekAtasBawah = 60;
+	int height = 40;
+	int jarakKeUjung = panjangDekBawah / 2 + deltaDekAtasBawah / 2;
+	
+	// Ship's relative coordinate to canvas, ship's actuator
+	int xShipCoordinate = center.x - jarakKeUjung;
+	int yShipCoordinate = center.y - height;
+	
+	// Ship's border coordinates
+	vector<Coord>  shipCoordinates;
+	
+	shipCoordinates.push_back(coord(0, 0));
+	shipCoordinates.push_back(coord(0 + jarakKeUjung + jarakKeUjung, 0));
+	shipCoordinates.push_back(coord(panjangDekBawah / 2 + panjangDekBawah / 2 + deltaDekAtasBawah/2, height));
+	shipCoordinates.push_back(coord(deltaDekAtasBawah/2, height));
+		
+	// Draw ship's border relative to canvas
+	for(int i = 0; i < shipCoordinates.size(); i++){
+		int x0, y0, x1, y1;
+		
+		if(i < shipCoordinates.size() - 1){
+			x0 = shipCoordinates.at(i).x + xShipCoordinate;
+			y0 = shipCoordinates.at(i).y + yShipCoordinate;
+			x1 = shipCoordinates.at(i + 1).x + xShipCoordinate;
+			y1 = shipCoordinates.at(i + 1).y + yShipCoordinate;
+		}else{
+			x0 = shipCoordinates.at(shipCoordinates.size() - 1).x + xShipCoordinate;
+			y0 = shipCoordinates.at(shipCoordinates.size() - 1).y + yShipCoordinate;
+			x1 = shipCoordinates.at(0).x + xShipCoordinate;
+			y1 = shipCoordinates.at(0).y + yShipCoordinate;
+		}
+		
+		plotLine(frame, x0, y0, x1, y1, color);
+	}
+	
+	// Dummy pattern's coordinate
+	
+	vector<Coord> patternCoordinates = getFishCoordinate(coord(50,20));
+	
+}
+
+void drawFish(Frame  *frame, Coord center, RGB color) {
+	vector<Coord> fishCoord = getFishCoordinate(coord(center.x-30,center.y-20));
+	for(int i=0;i<fishCoord.size();++i) {
+		if(i!=fishCoord.size()-1)
+			plotLine(frame,fishCoord.at(i).x, fishCoord.at(i).y ,fishCoord.at(i+1).x, fishCoord.at(i+1).y, color);
+		else
+			plotLine(frame, fishCoord.at(i).x, fishCoord.at(i).y ,fishCoord.at(0).x, fishCoord.at(0).y, color);
+	}
+}
+
+vector<Coord> getBirdCoordinate(Coord center) {
+	vector<Coord> birdCoord;
+
+	birdCoord.push_back(coord(center.x, center.y));
+	birdCoord.push_back(coord(birdCoord.at(0).x+10, birdCoord.at(0).y-5));
+	birdCoord.push_back(coord(birdCoord.at(1).x+10, birdCoord.at(1).y+5));
+	birdCoord.push_back(coord(birdCoord.at(2).x+5, birdCoord.at(2).y+5));
+	birdCoord.push_back(coord(birdCoord.at(3).x+20, birdCoord.at(3).y+5));
+	birdCoord.push_back(coord(birdCoord.at(4).x+5, birdCoord.at(4).y));
+	birdCoord.push_back(coord(birdCoord.at(5).x-10, birdCoord.at(5).y+5));
+	birdCoord.push_back(coord(birdCoord.at(6).x-10, birdCoord.at(6).y));
+	birdCoord.push_back(coord(birdCoord.at(7).x-10, birdCoord.at(7).y-2));
+	birdCoord.push_back(coord(birdCoord.at(8).x-10, birdCoord.at(8).y-2));
+	birdCoord.push_back(coord(birdCoord.at(9).x-10, birdCoord.at(9).y-2));
+	birdCoord.push_back(coord(birdCoord.at(10).x-10, birdCoord.at(10).y-2));
+
+	return birdCoord;
+}
+
+vector<Coord> getFishCoordinate(Coord center) {
+	vector<Coord> fishCoord;
+
+	int xHeight = 72;
+	int yHeight = 12;
+	
+
+	fishCoord.push_back(coord(center.x, center.y));
+	fishCoord.push_back(coord(fishCoord.at(0).x + 7, fishCoord.at(0).y - 3));
+	fishCoord.push_back(coord(fishCoord.at(1).x + 10, fishCoord.at(1).y - 2));
+	fishCoord.push_back(coord(fishCoord.at(2).x + 15, fishCoord.at(2).y - 1));
+	fishCoord.push_back(coord(fishCoord.at(3).x + 15, fishCoord.at(3).y + 1));
+	fishCoord.push_back(coord(fishCoord.at(4).x + 12, fishCoord.at(4).y + 3));
+	fishCoord.push_back(coord(fishCoord.at(5).x + 7, fishCoord.at(5).y));
+	fishCoord.push_back(coord(fishCoord.at(6).x + 6, fishCoord.at(6).y - 6));
+	fishCoord.push_back(coord(fishCoord.at(7).x, fishCoord.at(7).y + 12));
+	fishCoord.push_back(coord(fishCoord.at(8).x - 6, fishCoord.at(8).y - 5)); 
+	fishCoord.push_back(coord(fishCoord.at(9).x - 7, fishCoord.at(9).y + 2));
+	fishCoord.push_back(coord(fishCoord.at(10).x - 12, fishCoord.at(10).y + 3));
+	fishCoord.push_back(coord(fishCoord.at(11).x - 15, fishCoord.at(11).y + 1));
+	fishCoord.push_back(coord(fishCoord.at(12).x - 15, fishCoord.at(12).y - 1));
+	fishCoord.push_back(coord(fishCoord.at(13).x - 10, fishCoord.at(13).y - 2));
+
+	return fishCoord;
+
+}
+
+void colorFlood(Frame* frm,int x, int y,RGB color){	
+if ((isColorEqual(frm->px[x][y],color)==1)|| x<1 || x>999 || y<1 || y>499 ){
+	//do nothing
+	} 
+else{
+	insertPixel(frm,coord(x,y),color);
+	colorFlood(frm,x+1,y,color);
+	colorFlood(frm,x,y+1,color);
+	colorFlood(frm,x-1,y,color);
+	colorFlood(frm,x,y-1,color);
+	}	
+}
+
+int isColorEqual(RGB color1, RGB color2){
+if (color1.r == color2.r && color1.g == color2.g && color1.b == color2.b){return 1;}
+else {return 0;}
+	}
+
+void drawStickman(Frame* frm,Coord loc,int sel,RGB color,int counter){
+	plotCircle(frm,loc.x,loc.y,15,color);
+	plotLine(frm,loc.x,loc.y+15,loc.x,loc.y+50,color);
+	
+	if(counter % 2 == 0){
+		plotLine(frm,loc.x,loc.y+30,loc.x+20,loc.y+sel-3,color);
+		plotLine(frm,loc.x,loc.y+30,loc.x+25,loc.y+(sel+10)-3,color);
+	}else{
+		plotLine(frm,loc.x,loc.y+30,loc.x+20,loc.y+sel,color);
+		plotLine(frm,loc.x,loc.y+30,loc.x+25,loc.y+(sel+10),color);
+	}
+	
+	
+}
+
+void drawCannon(Frame* frm,Coord loc,RGB color){
+	plotLine(frm,loc.x-10,loc.y-10,loc.x-10,loc.y+30,color);
+	plotLine(frm,loc.x-10,loc.y+30,loc.x+10,loc.y+30,color);
+	plotLine(frm,loc.x+10,loc.y+30,loc.x+10,loc.y-10,color);
+	plotLine(frm,loc.x+10,loc.y-10,loc.x-10,loc.y-10,color);	
+	plotHalfCircle(frm,loc.x,loc.y-10,10,color);
+	loc.y=loc.y-20;
+	plotLine(frm,loc.x-5,loc.y-5,loc.x-5,loc.y+2,color);
+	//plotLine(loc.x-5,loc.y+5,loc.x+5,loc.y+5);
+	plotLine(frm,loc.x+5,loc.y+2,loc.x+5,loc.y-5,color);
+	plotLine(frm,loc.x+5,loc.y-5,loc.x-5,loc.y-5,color);	
+}
+
+void drawStickmanAndCannon(Frame *frame, Coord shipPosition, RGB color, int counter){
+	
+	if(counter % 2 == 0){
+		//Draw cannon
+		drawCannon(frame, coord(shipPosition.x, shipPosition.y - 80 - 3), rgb(99,99,99));
+	}else{
+		//Draw cannon
+		drawCannon(frame, coord(shipPosition.x, shipPosition.y - 80), rgb(99,99,99));
+	}
+		
+	//Draw stickman
+	drawStickman(frame, coord(shipPosition.x - 30, shipPosition.y - 90), 15, rgb(99,99,99),counter);
+}
