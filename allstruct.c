@@ -54,16 +54,32 @@ std::vector<Coord3d> perspectiveTransformation(std::vector<Coord3d> threeDimensi
 	std::vector<Coord3d> transformedCoordinates;
 	
 	for(int i = 0; i < threeDimensionalCoordinates.size(); i++){
-		float x = threeDimensionalCoordinates.at(i).x - cameraPosition.x;
-		float y = threeDimensionalCoordinates.at(i).y - cameraPosition.y;
-		float z = threeDimensionalCoordinates.at(i).z - cameraPosition.z;
-		
 		float xRadian = (float)angleX * PI / float(180);
 		float yRadian = (float)angleY * PI / float(180);
 		
+		/*float x = threeDimensionalCoordinates.at(i).x - cameraPosition.x;
+		float y = threeDimensionalCoordinates.at(i).y - cameraPosition.y;
+		float z = threeDimensionalCoordinates.at(i).z - cameraPosition.z;
+		
 		int dx = round(std::cos(yRadian) * x - std::sin(yRadian) * z);
 		int dy = round(std::sin(xRadian) * (std::cos(yRadian) * z + std::sin(yRadian) * x) + std::cos(xRadian) * y);
-		int dz = round(std::cos(xRadian) * (std::cos(yRadian) * z + std::sin(yRadian) * x) - std::sin(xRadian) * y);
+		int dz = round(std::cos(xRadian) * (std::cos(yRadian) * z + std::sin(yRadian) * x) - std::sin(xRadian) * y);*/
+			
+		float x = threeDimensionalCoordinates.at(i).x;
+		float y = threeDimensionalCoordinates.at(i).y;
+		float z = threeDimensionalCoordinates.at(i).z;
+		
+		float xRotateX = x;
+		float yRotateX = y * std::cos(xRadian) + z * std::sin(xRadian);
+		float zRotateX = z * std::cos(xRadian) - y * std::sin(xRadian);
+		
+		float xRotateY = xRotateX * std::cos(yRadian) - zRotateX * std::sin(yRadian);
+		float yRotateY = yRotateX;
+		float zRotateY = zRotateX * std::cos(yRadian) + xRotateX * std::sin(yRadian);
+		
+		int dx = (int)xRotateY - cameraPosition.x;
+		int dy = (int)yRotateY - cameraPosition.y;
+		int dz = (int)zRotateY - cameraPosition.z;
 		
 		transformedCoordinates.push_back(coord3d(dx, dy, dz));
 	}
