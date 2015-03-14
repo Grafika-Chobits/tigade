@@ -214,8 +214,8 @@ void *threadFunc(void *arg)
     char b[3];
 	fmouse = fopen("/dev/input/mice","r");
     while(1){
-		//cameraX += b[1];
-		//cameraY -= b[2];
+		cameraX = cameraX + b[1];
+		cameraY = cameraY - b[2];
     }
     fclose(fmouse);
 	return NULL;
@@ -281,6 +281,7 @@ int main() {
 		flushFrame(&canvas, rgb(0,0,0));
 		
 		// create 3d block
+		cout << "camera: " << cameraX << " , " << cameraY << endl;
 		drawBlock(&canvas, block(coord3d(200,200,200), 100, 100, 100), coord3d(cameraX, cameraY, 300), canvasWidth, canvasHeight, rgb(99,99,99));
 
 		//show frame
