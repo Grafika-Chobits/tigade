@@ -20,9 +20,9 @@ Balok balok(Coord _center, int _panjang, int _lebar, int _tinggi){
 	Balok retval;
 	retval.center.x = _center.x;
 	retval.center.y = _center.y;
-	panjang = _panjang;
-	lebar = _lebar;
-	tinggi = _tinggi;
+	retval.panjang = _panjang;
+	retval.lebar = _lebar;
+	retval.tinggi = _tinggi;
 	return retval;
 }
 
