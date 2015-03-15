@@ -12,6 +12,14 @@ void drawSquare (Frame *frm, Coord kiriAtas, Coord kananBawah, RGB color)
 	plotLine(frm, kiriAtas.x, kananBawah.y, kananBawah.x, kananBawah.y, color);
 }
 
+void drawFreeSquare(Frame *frm, Coord kiriAtas, Coord kananAtas, Coord kiriBawah, Coord kananBawah, RGB color)
+{
+	plotLine(frm, kiriAtas.x, kiriAtas.y, kananAtas.x, kananAtas.y, color);
+	plotLine(frm, kananAtas.x, kananAtas.y, kananBawah.x, kananBawah.y, color);
+	plotLine(frm, kananBawah.x, kananBawah.y, kiriBawah.x, kiriBawah.y, color);
+	plotLine(frm, kiriAtas.x, kiriAtas.y, kiriBawah.x, kiriBawah.y, color);
+}
+
 std::vector<Line> drawKapal(Frame *frm, Coord loc, RGB color){
 	plotLine(frm,loc.x-15,loc.y-10,loc.x+15,loc.y-10,color);
 	plotLine(frm,loc.x-15,loc.y+10,loc.x+15,loc.y+10,color);
@@ -1163,6 +1171,125 @@ void drawWalkingStickman(Frame *frame, Coord center, RGB color){
 		
 		Coord leftLowerLegEndPoint = lengthEndPoint(coord(leftUpperLegEndPoint.x, leftUpperLegEndPoint.y), leftLowerLegRotation, leftLowerLegLength);
 		plotLine(frame, leftUpperLegEndPoint.x, leftUpperLegEndPoint.y, leftLowerLegEndPoint.x, leftLowerLegEndPoint.y, color);
+	}
+}
+
+void drawBlock(Frame *frm, Block block, Coord3d cameraPosition, int angleX, int angleY, int screenWidth, int screenHeight, RGB color){
+	std::vector<Line> lines = perspectiveProjection(block, cameraPosition, angleX, angleY);
+	int halfScreenWidth = screenWidth / 2;
+	int halfScreenHeight = screenHeight / 2;
+	
+	for(int i = 0; i < lines.size(); i++){
+		int startX = lines.at(i).start.x + halfScreenWidth;
+		int startY = lines.at(i).start.y + halfScreenHeight;
+		int endX = lines.at(i).end.x + halfScreenWidth;
+		int endY = lines.at(i).end.y + halfScreenHeight;
+		
+		plotLine(frm, startX, startY, endX, endY, color);
+	}
+}
+
+void drawITB(Frame *frm, Coord3d cameraPosition, int angleX, int angleY, int screenWidth, int screenHeight, RGB color){
+	vector<Block> buildings;
+	
+	// SBM
+	buildings.push_back(block(coord3d(-170, 0, -170), 70, 10, 40));
+	buildings.push_back(block(coord3d(-125, 0, -185), 20, 15, 10));
+	buildings.push_back(block(coord3d(-180, 0, -150), 70, 10, 40));
+	
+	// Matematika
+	buildings.push_back(block(coord3d(-185, 0, -125), 65, 15, 40));
+	buildings.push_back(block(coord3d(-190, 0, -100), 30, 20, 40));
+	buildings.push_back(block(coord3d(-160, 0, -100), 30, 20, 40));
+	
+	// Mesin
+	buildings.push_back(block(coord3d(-200, 0, -30), 70, 40, 40));
+	buildings.push_back(block(coord3d(-200, 0, 0), 40, 20, 40));
+	buildings.push_back(block(coord3d(-200, 0, 20), 70, 20, 40));
+	
+	// GKU Barat
+	buildings.push_back(block(coord3d(-165, 0, 75), 45, 45, 40));
+	buildings.push_back(block(coord3d(-200, 0, 80), 30, 15, 20));
+	buildings.push_back(block(coord3d(-150, 0, 110), 50, 20, 20));
+	
+	// labtek
+	buildings.push_back(block(coord3d(-95, 0, 90), 95, 30, 50));
+	buildings.push_back(block(coord3d(-100, 0, 40), 95, 30, 50));
+	buildings.push_back(block(coord3d(20, 0, 90), 95, 30, 50));
+	buildings.push_back(block(coord3d(25, 0, 40), 95, 30, 50));
+	
+	// Oktagon, TVST
+	buildings.push_back(block(coord3d(-40, 0, -10), 40, 40, 40));
+	buildings.push_back(block(coord3d(-40, 0, -60), 40, 40, 40));
+	
+	// Labtek Biru
+	buildings.push_back(block(coord3d(-120, 0, -20), 70, 25, 40));
+	buildings.push_back(block(coord3d(-120, 0, -70), 70, 30, 40));
+	buildings.push_back(block(coord3d(-100, 0, -50), 40, 15, 20));
+	
+	// Comlabs, PLN
+	buildings.push_back(block(coord3d(20, 0, -10), 40, 30, 40));
+	buildings.push_back(block(coord3d(20, 0, -70), 40, 30, 40));
+	
+	// Mektan
+	buildings.push_back(block(coord3d(80, 0, 0), 30, 100, 40));
+	
+	// PAU
+	buildings.push_back(block(coord3d(-40, 0, -120), 40, 70, 80));
+	
+	// Perpus
+	buildings.push_back(block(coord3d(30, 0, -130), 40, 60, 40));
+	
+	// Tambang
+	buildings.push_back(block(coord3d(130, 0, -140), 110, 20, 40));
+	buildings.push_back(block(coord3d(170, 0, -90), 20, 40, 20));
+	buildings.push_back(block(coord3d(140, 0, -70), 80, 15, 10));
+	buildings.push_back(block(coord3d(220, 0, -70), 10, 45, 10));
+	
+	// Kimia
+	buildings.push_back(block(coord3d(140, 0, -40), 70, 20, 30));
+	buildings.push_back(block(coord3d(140, 0, -10), 75, 20, 30));
+	
+	// Lab gelombang
+	buildings.push_back(block(coord3d(140, 0, 35), 60, 25, 15));
+	
+	// GKU Timur
+	buildings.push_back(block(coord3d(155, 0, 65), 55, 25, 50));
+	buildings.push_back(block(coord3d(190, 0, 85), 20, 20, 20));
+	
+	// Doping
+	buildings.push_back(block(coord3d(140, 0, 110), 40, 25, 40));
+	
+	// CC
+	buildings.push_back(block(coord3d(-50, 0, 150), 50, 20, 30));
+	buildings.push_back(block(coord3d(25, 0, 150), 50, 20, 30));
+	
+	// Lingkungan
+	buildings.push_back(block(coord3d(85, 0, 150), 95, 25, 15));
+	buildings.push_back(block(coord3d(85, 0, 150), 50, 20, 30));
+	buildings.push_back(block(coord3d(140, 0, 180), 50, 25, 30));
+	
+	// Plano, Arsi
+	buildings.push_back(block(coord3d(90, 0, 210), 45, 15, 30));
+	buildings.push_back(block(coord3d(140, 0, 210), 50, 15, 30));
+	
+	// SR
+	buildings.push_back(block(coord3d(110, 0, 250), 30, 30, 35));
+	buildings.push_back(block(coord3d(140, 0, 260), 20, 40, 10));
+	
+	// Aula
+	buildings.push_back(block(coord3d(50, 0, 270), 60, 30, 20));
+	buildings.push_back(block(coord3d(-80, 0, 270), 60, 30, 20));
+	
+	// Sipil
+	buildings.push_back(block(coord3d(-140, 0, 240), 80, 20, 25));
+	buildings.push_back(block(coord3d(-150, 0, 220), 90, 15, 25));
+	
+	// Fisika
+	buildings.push_back(block(coord3d(-150, 0, 190), 90, 60, 20));
+	
+	for(int i = 0; i < buildings.size(); i++){
+		drawBlock(frm, buildings.at(i), cameraPosition, angleX, angleY, screenWidth, screenHeight, color);
 	}
 }
 
