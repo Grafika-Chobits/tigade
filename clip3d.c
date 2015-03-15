@@ -147,7 +147,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 				if(kiriAtas.y == kananAtas.y)
 				{
 					y=ymin1;
-					x = x1 + (ymin1 - y1) * (x2-x1) / (y2-y1);
+					x = x1 + (y - y1) * (x2-x1) / (y2-y1);
 				}
 				else
 				{
@@ -160,9 +160,8 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 					}
 					else //Jika garisnya tegak lurus
 					{
-						printf("masuk x1 == x2\n");
 						x = x1;
-						y = kiriAtas.y;
+						y = (float)kananAtas.y + m2 * ((float)x - (float)kananAtas.x);
 					}
 					
 				}
@@ -171,7 +170,9 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 				//Cari titik potong dengan garis kanan
 			{
 				if(kananAtas.x == kananBawah.x)
+				{
 					x=xmax1;
+				}
 				else
 				{
 					float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
@@ -179,6 +180,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 					x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
 				}
 				y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+				
 			}
 			else if(ot == BOTTOM)
 				//Cari titik potong dengan garis bawah
@@ -192,8 +194,19 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 				{
 					float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
 					float m2 = ((float)kiriBawah.y - (float)kananBawah.y) / ((float)kiriBawah.x - (float)kananBawah.x);
-					x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananBawah.x + (float)kananBawah.y) / (m1 - m2) ); 
-					y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+
+					if(x1 != x2) //Jika garisnya tidak tegak lurus
+					{
+						x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananBawah.x + (float)kananBawah.y) / (m1 - m2) ); 
+						y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+					}
+					else //Jika garisnya tegak lurus
+					{
+						x = x1;
+						y = (float)kananBawah.y + m2 * ((float)x - (float)kananBawah.x);
+					}
+
+					
 				}
 			}
 			else if(ot == LEFT)
