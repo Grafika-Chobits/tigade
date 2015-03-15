@@ -175,8 +175,22 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 				}
 				y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
 			}
-			else if(ot == BOTTOM);
+			else if(ot == BOTTOM)
 				//Cari titik potong dengan garis bawah
+			{
+				if(kiriBawah.y == kananBawah.y)
+				{
+					y=ymax1;
+					x = x1 + (ymax1 - y1) * (x2 - x1) / (y2-y1);
+				}
+				else
+				{
+					float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+					float m2 = ((float)kiriBawah.y - (float)kananBawah.y) / ((float)kiriBawah.x - (float)kananBawah.x);
+					x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananBawah.x + (float)kananBawah.y) / (m1 - m2) ); 
+					y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+				}
+			}
 			else if(ot == LEFT)
 				//Cari titik potong dengan garis kiri
 			{
