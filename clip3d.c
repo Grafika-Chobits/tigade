@@ -17,6 +17,8 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 	int xmin, ymin, xmax, ymax;
 	// printf("kiriAtas.x = %d\n", kiriAtas.x);
 	// printf("kiriBawah.x = %d\n", kiriBawah.x);
+
+	//mengatur kiri
 	if(kiriAtas.x == kiriBawah.x)
 	{
 		xmin = kiriAtas.x;
@@ -68,6 +70,7 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 	//ymin
 	if(kiriAtas.y == kananAtas.y)
 	{
+		printf("MASUK  kiriAtas.y == kananAtas.y\n");
 		ymin = kiriAtas.y;
 		if(y<ymin)
 			oc|=TOP;
@@ -78,6 +81,7 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 		xmin = kiriAtas.y > kananAtas.y? kiriAtas.x:kananAtas.x;
 		if(y < ymin) 
 		{
+			printf("MASUK Y < YMIN\n");
 			m = (kananAtas.y - kiriAtas.y) / (kananAtas.x - kiriAtas.x);
 			//cari titik potong
 			int yPotong = round(m * (x - xmin) + ymin);
@@ -85,7 +89,10 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 			//Cek ada dimana y dilihat dari titik potong.
 			//Apakah ada di atas yPotong
 			if(y < yPotong)
+			{
+				printf("Masuk y < yPotong dengan oc = %d\n", oc);
 				oc|=TOP;
+			}
 		}
 	}
 
@@ -104,6 +111,7 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 		
 		if(y > ymax)
 		{
+			printf("MASUK Y > YMAX\n");
 			m = (kananBawah.y - kiriBawah.y) / (kananBawah.x - kiriBawah.x);
 			//Cari titik potong
 			int yPotong = round(m * (x - xmax) + ymax);
@@ -111,7 +119,10 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 			//Cek ada dimana y dilihat dari titik potong y.
 			//Apakah y ada di bawah yPotong
 			if(y > yPotong)
+			{
+				printf("Masuk y > yPotong dengan oc = %d\n", oc);
 				oc|=BOTTOM;
+			}
 		}
 	}
 
@@ -146,6 +157,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 		outcode o1,o2,ot;
 		o1=compute(x1,y1, kiriAtas, kananAtas, kiriBawah, kananBawah);
 		o2=compute(x2,y2, kiriAtas, kananAtas, kiriBawah, kananBawah);
+		printf("oc2 = %d\n", o2);
 		if(o1&o2) //kalo garisnya sama sekali gak berpotongan
 		{
 			clippedLines.push_back(line(coord(x1,y1),coord(x2,y2)));
@@ -237,7 +249,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 				}
 				y = round((double)y1 + ((double)x - (double)x1) * ((double)y2 - (double)y1) / ((double)x2 - (double)x1));
 			}
-			else if(ot = TOPRIGHT)
+			else if(ot == TOPRIGHT)
 			{
 				printf("masuk top right\n");
 				float mKanan = 0, mAtas = 0, xRight = 0, yRight = 0;
@@ -296,39 +308,129 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 				
 			}
 
-			else if(ot = BOTTOMRIGHT)
+			else if(ot == BOTTOMRIGHT)
 			{
-				// float mKanan = 0, mBawah = 0, xRight = 0, yRight = 0;
-				// float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
-				// if(kananAtas.x != kananBawah.x) //Jika sisi kanannya tidak tegak lurus
-				// {
-				// 	mKanan = ((float)kananBawah.y - (float)kananAtas.y) / ((float)kananBawah.x - (float)kananAtas.x);
-				// 	xRight = round( (m1*(float)x1 - (float)y1 - mKanan * (float)kananBawah.x + (float)kananBawah.y) / (m1 - mKanan));
-				// 	yRight = round((float)y1 + ((float)xRight - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+				printf("Masuk BOTTOMRIGHT\n");
+				float mKanan = 0, mBawah = 0, xRight = 0, yRight = 0;
+				float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+				if(kananAtas.x != kananBawah.x) //Jika sisi kanannya tidak tegak lurus
+				{
+					mKanan = ((float)kananBawah.y - (float)kananAtas.y) / ((float)kananBawah.x - (float)kananAtas.x);
+					xRight = round( (m1*(float)x1 - (float)y1 - mKanan * (float)kananBawah.x + (float)kananBawah.y) / (m1 - mKanan));
+					yRight = round((float)y1 + ((float)xRight - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
 
-				// 	int xmin = kananAtas.x < kananBawah.x? kananAtas.x:kananBawah.x;
-				// 	int ymin = kananAtas.x < kananBawah.x? kananAtas.y:kananBawah.y;
-				// 	int xmax = kananAtas.x > kananBawah.x? kananAtas.x:kananBawah.x;
-				// 	int ymax = kananAtas.x > kananBawah.x? kananAtas.y:kananBawah.y;
+					int xmin = kananAtas.x < kananBawah.x? kananAtas.x:kananBawah.x;
+					int ymin = kananAtas.x < kananBawah.x? kananAtas.y:kananBawah.y;
+					int xmax = kananAtas.x > kananBawah.x? kananAtas.x:kananBawah.x;
+					int ymax = kananAtas.x > kananBawah.x? kananAtas.y:kananBawah.y;
 
-				// 	if(xRight > xmin && xRight < xmax && yRight > ymin && yRight < ymax)
-				// 		//Berpotongan dengan kanan
-				// 	{
-				// 		x = xRight;
-				// 		y = yRight;
-				// 	}
-				// 	else //berpotongan dengan atas
-				// 	{
-				// 		mBawah = ((float)kiriBawah.y - (float)kananBawah.y) / ((float)kiriBawah.x - (float)kananBawah.x);
-				// 		x = round( (m1*(float)x1 - (float)y1 - mBawah * (float)kananBawah.x + (float)kananBawah.y) / (m1 - mBawah));
-				// 		y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
-				// 	}
-				// }
+					if(xRight > xmin && xRight < xmax && yRight > ymin && yRight < ymax)
+						//Berpotongan dengan kanan
+					{
+						printf("Berpotongan dengan kanan\n");
+						x = xRight;
+						y = yRight;
+					}
+					else //berpotongan dengan bawah
+					{
+						printf("Berpotongan dengan bawah\n");
+						mBawah = ((float)kiriBawah.y - (float)kananBawah.y) / ((float)kiriBawah.x - (float)kananBawah.x);
+						x = round( (m1*(float)x1 - (float)y1 - mBawah * (float)kananBawah.x + (float)kananBawah.y) / (m1 - mBawah));
+						y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+					}
+				}
+				else //Sisi kanannya tegak lurus
+				{
+					
+					xRight =xmax1;
+					yRight = round((float)y1 + ((float)xRight - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+					if(yRight > kananAtas.y && yRight < kananBawah.y) //jika garis memotong kanan
+					{
+						x = xRight;
+						y = yRight;
+					}
+					else //jika garis memotong bawah
+					{
+						if(kiriBawah.y == kananBawah.y) //Jika garis bawahnya sejajar sumbu x
+						{
+							y=ymax1;
+							x = x1 + (y - y1) * (x2-x1) / (y2-y1);
+						}
+						else
+						{
+							float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+							float m2 = ((float)kiriBawah.y - (float)kananBawah.y) / ((float)kiriBawah.x - (float)kananBawah.x);
+							//x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
+							y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+						}
+					}
+
+				}
 			}
 
-			else if(ot = BOTTOMLEFT);
+			else if(ot == BOTTOMLEFT)
+			{
+				float mLeft = 0, mBawah = 0, xLeft = 0, yLeft = 0;
+				float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+				if(kiriAtas.x != kiriBawah.x) //Jika sisi kirinya tidak tegak lurus
+				{
+					mLeft = ((float)kiriBawah.y - (float)kiriAtas.y) / ((float)kiriBawah.x - (float)kiriAtas.x);
+					xLeft = round( (m1*(float)x1 - (float)y1 - mLeft * (float)kiriBawah.x + (float)kiriBawah.y) / (m1 - mLeft));
+					yLeft = round((float)y1 + ((float)xLeft - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+					//SampaiSini
+					int xmin = kananAtas.x < kananBawah.x? kananAtas.x:kananBawah.x;
+					int ymin = kananAtas.x < kananBawah.x? kananAtas.y:kananBawah.y;
+					int xmax = kananAtas.x > kananBawah.x? kananAtas.x:kananBawah.x;
+					int ymax = kananAtas.x > kananBawah.x? kananAtas.y:kananBawah.y;
 
-			else if(ot == TOPLEFT);
+					if(xRight > xmin && xRight < xmax && yRight > ymin && yRight < ymax)
+						//Berpotongan dengan kanan
+					{
+						printf("Berpotongan dengan kanan\n");
+						x = xRight;
+						y = yRight;
+					}
+					else //berpotongan dengan bawah
+					{
+						printf("Berpotongan dengan bawah\n");
+						mBawah = ((float)kiriBawah.y - (float)kananBawah.y) / ((float)kiriBawah.x - (float)kananBawah.x);
+						x = round( (m1*(float)x1 - (float)y1 - mBawah * (float)kananBawah.x + (float)kananBawah.y) / (m1 - mBawah));
+						y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+					}
+				}
+				else //Sisi kanannya tegak lurus
+				{
+					
+					xRight =xmax1;
+					yRight = round((float)y1 + ((float)xRight - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+					if(yRight > kananAtas.y && yRight < kananBawah.y) //jika garis memotong kanan
+					{
+						x = xRight;
+						y = yRight;
+					}
+					else //jika garis memotong bawah
+					{
+						if(kiriBawah.y == kananBawah.y) //Jika garis bawahnya sejajar sumbu x
+						{
+							y=ymax1;
+							x = x1 + (y - y1) * (x2-x1) / (y2-y1);
+						}
+						else
+						{
+							float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+							float m2 = ((float)kiriBawah.y - (float)kananBawah.y) / ((float)kiriBawah.x - (float)kananBawah.x);
+							//x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
+							y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+						}
+					}
+
+				}
+			}
+
+			else if(ot == TOPLEFT)
+			{
+
+			}
 
 			if(ot==o1) //Jika yang diluar adalah o1
 			{

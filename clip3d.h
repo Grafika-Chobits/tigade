@@ -9,12 +9,13 @@
 #include "allstruct.h"
 #include "drawing.h"
 
-//TOP = 	1000
-//BOTTOM = 	0100
+//			8421
+//TOP = 	0100
+//BOTTOM = 	1000
 //LEFT = 	0001
 //RIGHT = 	0010
 
-const int TOP=4,BOTTOM=8,RIGHT=2,LEFT=1,TOPRIGHT=10, BOTTOMRIGHT=6, BOTTOMLEFT = 5, TOPLEFT = 9;
+const int TOP=4,BOTTOM=8,RIGHT=2,LEFT=1,TOPRIGHT=6, BOTTOMRIGHT=10, BOTTOMLEFT = 9, TOPLEFT = 5;
 
 typedef int outcode;
 
