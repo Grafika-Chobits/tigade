@@ -38,7 +38,7 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 			m = (kiriBawah.y - kiriAtas.y) / (kiriBawah.x - kiriAtas.x);
 			// printf("m dengan x < xmin = %f\n", m);
 			// cari xPotong
-			int xPotong = round(m * (y - ymin) + xmin);
+			int xPotong = round((y - ymin) / m + xmin);
 			if(x < xPotong)
 				oc|=LEFT;
 		}
@@ -220,7 +220,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 					double m2 = ((double)kiriBawah.y - (double)kiriAtas.y) / ((double)kiriBawah.x - (double)kiriAtas.x);
 					x = round( (m1*(double)x1 - (double)y1 - m2 * (double)kiriAtas.x + (double)kiriAtas.y) / (m1 - m2) );
 				}
-				y = round((double)y1 + ((double)xmin1 - (double)x1) * ((double)y2 - (double)y1) / ((double)x2 - (double)x1));
+				y = round((double)y1 + ((double)x - (double)x1) * ((double)y2 - (double)y1) / ((double)x2 - (double)x1));
 			}
 			else if(ot = TOPRIGHT)
 			{
