@@ -56,15 +56,7 @@ std::vector<Coord3d> perspectiveTransformation(std::vector<Coord3d> threeDimensi
 	for(int i = 0; i < threeDimensionalCoordinates.size(); i++){
 		float xRadian = (float)angleX * PI / float(180);
 		float yRadian = (float)angleY * PI / float(180);
-		
-		/*float x = threeDimensionalCoordinates.at(i).x - cameraPosition.x;
-		float y = threeDimensionalCoordinates.at(i).y - cameraPosition.y;
-		float z = threeDimensionalCoordinates.at(i).z - cameraPosition.z;
-		
-		int dx = round(std::cos(yRadian) * x - std::sin(yRadian) * z);
-		int dy = round(std::sin(xRadian) * (std::cos(yRadian) * z + std::sin(yRadian) * x) + std::cos(xRadian) * y);
-		int dz = round(std::cos(xRadian) * (std::cos(yRadian) * z + std::sin(yRadian) * x) - std::sin(xRadian) * y);*/
-			
+				
 		float x = threeDimensionalCoordinates.at(i).x;
 		float y = threeDimensionalCoordinates.at(i).y;
 		float z = threeDimensionalCoordinates.at(i).z;

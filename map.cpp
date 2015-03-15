@@ -216,9 +216,6 @@ void resetTermios(void) {
 
 /* GLOBALVAR DECLARATIONS ----------------------------------------------- */
 
-int canvasWidth = 1300;
-int canvasHeight = 700;
-
 int cameraX = 0;
 int cameraY = 0;
 
@@ -227,8 +224,9 @@ int angleY = 0;
 
 int running = 1;
 
+int leftClick = 0;
 
-/* VIEW CONTROLLER ------------------------------------------------- */
+/* VIEW CONTROLLER: MOUSE AND KEYBOARD----------------------------------- */
 void *threadFuncMouse(void *arg)
 {
 	FILE *fmouse;
@@ -237,9 +235,15 @@ void *threadFuncMouse(void *arg)
 	
     while(1){
 		fread(b,sizeof(char),3,fmouse);
-		
-		cameraX = cameraX + b[1];
-		cameraY = cameraY + b[2];
+		leftClick = (b[0]&1)>0;
+	
+		if(leftClick == 1){
+			angleX = angleX - b[2] / mouseSensitivity;
+			angleY = angleY + b[1] / mouseSensitivity;
+		}else{
+			cameraX = cameraX + b[1] / mouseSensitivity;
+			cameraY = cameraY + b[2] / mouseSensitivity;
+		}
     }
     fclose(fmouse);
 
@@ -315,11 +319,6 @@ int main() {
 	// prepare environment controller
 	unsigned char loop = 1; // frame loop controller
 	Frame cFrame; // composition frame (Video RAM)
-	
-	// prepare canvas
-	Frame canvas;
-	flushFrame(&canvas, rgb(0,0,0));
-	Coord canvasPosition = coord(screenX/2,screenY/2);
 		
 	pthread_t pth_mouse;
 	pthread_create(&pth_mouse,NULL,threadFuncMouse,NULL);
@@ -327,24 +326,26 @@ int main() {
 	pthread_t pth_keyboard;
 	pthread_create(&pth_keyboard,NULL,threadFuncKeyboard,NULL);
 	
+	int zoom = 400;
+	
 	while (loop) {
-		// clean composition frame
-		flushFrame(&cFrame, rgb(33,33,33));
-				
-		showCanvas(&cFrame, &canvas, canvasWidth, canvasHeight, canvasPosition, rgb(99,99,99), 1);
+		
 								
 		// clean canvas
-		flushFrame(&canvas, rgb(0,0,0));
+		flushFrame(&cFrame, rgb(0,0,0));
+		
+		// draw ITB's map
+		drawITB(&cFrame, coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
 		
 		// create 3d block
-		drawBlock(&canvas, block(coord3d(100,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), angleX, angleY, canvasWidth, canvasHeight, rgb(99,99,99));
-		drawBlock(&canvas, block(coord3d(100,100,210), 100, 100, 100), coord3d(cameraX, cameraY, 500), angleX, angleY, canvasWidth, canvasHeight, rgb(99,99,99));
-		drawBlock(&canvas, block(coord3d(210,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), angleX, angleY, canvasWidth, canvasHeight, rgb(99,99,99));
+		/*drawBlock(&cFrame, block(coord3d(50,50,50), 100, 100, 100), coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
+		drawBlock(&cFrame, block(coord3d(50,50,160), 100, 100, 100), coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
+		drawBlock(&cFrame, block(coord3d(160,50,50), 100, 100, 100), coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
 		
-		drawBlock(&canvas, block(coord3d(-200,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), angleX, angleY, canvasWidth, canvasHeight, rgb(99,99,99));
-		drawBlock(&canvas, block(coord3d(-200,100,210), 100, 100, 100), coord3d(cameraX, cameraY, 500), angleX, angleY, canvasWidth, canvasHeight, rgb(99,99,99));
-		drawBlock(&canvas, block(coord3d(-310,100,100), 100, 100, 100), coord3d(cameraX, cameraY, 500), angleX, angleY, canvasWidth, canvasHeight, rgb(99,99,99));
-		
+		drawBlock(&cFrame, block(coord3d(-150,50,50), 100, 100, 100), coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
+		drawBlock(&cFrame, block(coord3d(-150,50,160), 100, 100, 100), coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
+		drawBlock(&cFrame, block(coord3d(-260,50,50), 100, 100, 100), coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
+		*/
 		//show frame
 		showFrame(&cFrame,&fb);	
 	}

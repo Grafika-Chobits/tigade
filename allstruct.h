@@ -22,7 +22,7 @@
 #define screenXstart 250
 #define screenX 1366
 #define screenY 768
-#define mouseSensitivity 1
+#define mouseSensitivity 3
 
 /* TYPEDEFS ------------------------------------------------------------ */
 //RGB color
