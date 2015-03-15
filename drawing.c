@@ -564,23 +564,18 @@ std::vector<Line> rotateBaling(Frame *frm,Coord loc, RGB col ,int counter ){
 	return balingLine;
 }
 
-void drawBlock(Frame *frm, Block block, Coord3d cameraPosition, int angleX, int angleY, int screenWidth, int screenHeight, int xPosition, int yPosition, RGB color){
-	std::vector<Line> lines = perspectiveProjection(block, cameraPosition, angleX, angleY);
-	int halfScreenWidth = screenWidth / 2;
-	int halfScreenHeight = screenHeight / 2;
-	
-	for(int i = 0; i < lines.size(); i++){
-		int startX = lines.at(i).start.x + halfScreenWidth + xPosition;
-		int startY = lines.at(i).start.y + halfScreenHeight + yPosition;
-		int endX = lines.at(i).end.x + halfScreenWidth + xPosition;
-		int endY = lines.at(i).end.y + halfScreenHeight + yPosition;
-		
-		plotLine(frm, startX, startY, endX, endY, color);
+void appendLines(std::vector<Line> *allLines, std::vector<Line> building){
+	for(int i = 0; i < building.size(); i++){
+		allLines->push_back(building.at(i));
 	}
 }
 
 void drawITB(Frame *frm, Coord3d cameraPosition, int angleX, int angleY, int screenWidth, int screenHeight, int xPosition, int yPosition, RGB color){
 	vector<Block> buildings;
+	vector<Line> allLines;
+	vector<Line> clippedLines;
+	int halfScreenWidth = screenWidth / 2;
+	int halfScreenHeight = screenHeight / 2;
 				
 	// GKU Barat
 	buildings.push_back(block(coord3d(-165, 0, 75), 45, 45, 40));
@@ -599,7 +594,7 @@ void drawITB(Frame *frm, Coord3d cameraPosition, int angleX, int angleY, int scr
 	
 	// Oktagon, TVST
 	buildings.push_back(block(coord3d(-40, 0, -10), 40, 40, 40));
-	vector<Line> Oktagon = perspectiveProjection(buildings[5], cameraPosition, angleX, angleY);
+	vector<Line> oktagon = perspectiveProjection(buildings[5], cameraPosition, angleX, angleY);
 	buildings.push_back(block(coord3d(-40, 0, -60), 40, 40, 40));
 	vector<Line> tvst = perspectiveProjection(buildings[6], cameraPosition, angleX, angleY);
 		
@@ -633,11 +628,42 @@ void drawITB(Frame *frm, Coord3d cameraPosition, int angleX, int angleY, int scr
 	buildings.push_back(block(coord3d(-80, 0, 270), 60, 30, 20));
 	vector<Line> aulaBarat = perspectiveProjection(buildings[15], cameraPosition, angleX, angleY);
 	
-	for(int i = 0; i < buildings.size(); i++){
-		drawBlock(frm, buildings.at(i), cameraPosition, angleX, angleY, screenWidth, screenHeight, xPosition, yPosition, color);
+	appendLines(&allLines, gkuBarat);
+	appendLines(&allLines, labtekV);
+	appendLines(&allLines, labtekVI);
+	appendLines(&allLines, labtekVII);
+	appendLines(&allLines, labtekVIII);
+	appendLines(&allLines, oktagon);
+	appendLines(&allLines, tvst);
+	appendLines(&allLines, pln);
+	appendLines(&allLines, comlabs);
+	appendLines(&allLines, pau);
+	appendLines(&allLines, perpus);
+	appendLines(&allLines, gkuTimur);
+	appendLines(&allLines, ccBarat);
+	appendLines(&allLines, ccTimur);
+	appendLines(&allLines, aulaTimur);
+	appendLines(&allLines, aulaBarat);
+	
+	clippedLines = cohen_sutherland(aulaBarat, aulaBarat.at(2).end, aulaBarat.at(2).start, aulaBarat.at(0).start, aulaBarat.at(0).end, rgb(0,255,0));
+	
+	for(int i = 0; i < clippedLines.size(); i++){
+		int startX = clippedLines.at(i).start.x + halfScreenWidth + xPosition;
+		int startY = clippedLines.at(i).start.y + halfScreenHeight + yPosition;
+		int endX = clippedLines.at(i).end.x + halfScreenWidth + xPosition;
+		int endY = clippedLines.at(i).end.y + halfScreenHeight + yPosition;
+		
+		plotLine(frm, startX, startY, endX, endY, color);
 	}
 	
-	
+	/*for(int i = 0; i < allLines.size(); i++){
+		int startX = allLines.at(i).start.x + halfScreenWidth + xPosition;
+		int startY = allLines.at(i).start.y + halfScreenHeight + yPosition;
+		int endX = allLines.at(i).end.x + halfScreenWidth + xPosition;
+		int endY = allLines.at(i).end.y + halfScreenHeight + yPosition;
+		
+		plotLine(frm, startX, startY, endX, endY, color);
+	}*/
 }
 
 

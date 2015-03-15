@@ -19,7 +19,7 @@
 #include "plotting.h"
 #include "rotasi.h"
 #include "drawing.h"
-#include "clip.h"
+#include "clip3d.h"
 #include <pthread.h>
 
 using namespace std;
@@ -291,8 +291,7 @@ int main() {
 	int zoom = 400;
 	
 	while (loop) {
-		
-								
+				
 		// clean canvas
 		flushFrame(&cFrame, rgb(0,0,0));
 		

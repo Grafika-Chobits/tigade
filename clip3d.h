@@ -9,7 +9,13 @@
 #include "allstruct.h"
 #include "drawing.h"
 
-//~ const int TOP=4,BOTTOM=8,RIGHT=2,LEFT=1;
+//			8421
+//TOP = 	0100
+//BOTTOM = 	1000
+//LEFT = 	0001
+//RIGHT = 	0010
+
+const int TOP=4,BOTTOM=8,RIGHT=2,LEFT=1,TOPRIGHT=6, BOTTOMRIGHT=10, BOTTOMLEFT = 9, TOPLEFT = 5;
 
 typedef int outcode;
 
@@ -19,6 +25,9 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 
 std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord kiriAtas, Coord kananAtas, 
 																			Coord kiriBawah, Coord kananBawah, RGB color);
+																			
+std::vector<Line> cohen_sutherland(std::vector<Line> lines, Coord kiriAtas, Coord kananAtas, 
+																			Coord kiriBawah, Coord kananBawah, RGB color);																	
 
 void cohen_sutherland (Frame *frm, int x1,int y1,int x2,int y2, int xmin,int ymin, int xmax, int ymax, RGB color);
 
