@@ -130,69 +130,137 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 		outcode o1,o2,ot;
 		o1=compute(x1,y1, kiriAtas, kananAtas, kiriBawah, kananBawah);
 		o2=compute(x2,y2, kiriAtas, kananAtas, kiriBawah, kananBawah);
-		do{
-
-			if(!(o1 | o2))
+		if(o1&o2) //kalo garisnya sama sekali gak berpotongan
+		{
+			clippedLines.push_back(line(coord(x1,y1),coord(x2,y2)));
+		}
+		else if(o1 == 0 && o2 != 0 || o1 != 0 && o2 == 0) //Jika salah satu berpotongan
+		{
+			int x,y;
+			ot=o1?o1:o2; //Nyari point mana yang ada di luar kotak, kemudian masukin ke ot
+							//Jika o1 != 0, ot = o1, else ot = o2
+							//Titik yang diluar udah ketemu
+			if(ot == TOP);
+				//Cari titik potong dengan garis atas
+			else if(ot == RIGHT)
+				//Cari titik potong dengan garis kanan
 			{
-				done=true;
-				accept=true;
+				if(kananAtas.x == kananBawah.x)
+					x=xmax1;
+				else
+				{
+					float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+					float m2 = ((float)kananBawah.y - (float)kananAtas.y) / ((float)kananBawah.x - (float)kananAtas.x);
+					x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
+					printf("x = %d\n", x);
+				}
+				y = y1 + (x - x1) * (y2 - y1) / (x2 - x1);
 			}
-			else if(o1&o2)
+			else if(ot == BOTTOM);
+				//Cari titik potong dengan garis bawah
+			else if(ot == LEFT)
+				//Cari titik potong dengan garis kiri
 			{
-				done=true;
+				if(kiriAtas.x == kiriBawah.x)
+					x=xmin1;
+				else
+				{
+					float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+					float m2 = ((float)kiriBawah.y - (float)kiriAtas.y) / ((float)kiriBawah.x - (float)kiriAtas.x);
+					x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kiriAtas.x + (float)kiriAtas.y) / (m1 - m2) );
+				}
+				y = y1 + (xmin1 - x1) * (y2 - y1) / (x2 - x1);
+			}
+			else if(ot = TOPRIGHT);
+
+			else if(ot = BOTTOMRIGHT);
+
+			else if(ot = BOTTOMLEFT);
+
+			else if(ot == TOPLEFT);
+
+			if(ot==o1) //Jika yang diluar adalah o1
+			{
+				x2=x;
+				y2=y;
+				// o1=compute(x1,y1,kiriAtas, kananAtas, kiriBawah, kananBawah);
 			}
 			else
 			{
-				int x,y;
-				ot=o1?o1:o2; //Nyari point mana yang ada di luar kotak, kemudian masukin ke ot
-				if(ot & TOP)			// point is above the clip rectangle
-				{
-					y=ymin1;
-					x = x1 + (ymin1 - y1) * (x2-x1) / (y2-y1);
-				} 
-				else if(ot & BOTTOM) 	// point is below the clip rectangle
-				{
-					y=ymax1;
-					x = x1 + (ymax1 - y1) * (x2 - x1) / (y2-y1);
-				}
-				else if(ot & RIGHT)		// point is to the right of clip rectangle
-				{
-					if(kiriAtas.x == kiriBawah.x && kananAtas.x == kananBawah.x)
-						x=xmax1;
-					else
-					{
-						float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
-						float m2 = ((float)kananBawah.y - (float)kananAtas.y) / ((float)kananBawah.x - (float)kananAtas.x);
-						x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
-						printf("x = %d\n", x);
-					}
-					y = y1 + (x - x1) * (y2 - y1) / (x2 - x1);
-				}
-				else if(ot & LEFT)		// point is to the left of clip rectangle
-				{
-					x=xmin1;
-					//x = x1 + (ymin1 - y1) * (x2 - x1) / (y2 - y1);
-					y = y1 + (xmin1 - x1) * (y2 - y1) / (x2 - x1);
-				}
-				if(ot==o1)
-				{
-					x1=x;
-					y1=y;
-					o1=compute(x1,y1,kiriAtas, kananAtas, kiriBawah, kananBawah);
-				}
-				else
-				{
-					x2=x;
-					y2=y;
-					o2=compute(x2,y2,kiriAtas, kananAtas, kiriBawah, kananBawah);
-				}
+				x1=x;
+				y1=y;
+				// o2=compute(x2,y2,kiriAtas, kananAtas, kiriBawah, kananBawah);
 			}
-		}while(done==false);
-
-		if(accept==true)
-		{
 			clippedLines.push_back(line(coord(x1, y1),coord(x2,y2)));
 		}
+		else //2 titik diluar kotak, tapi garisnya memotong kotak
+		{
+
+		}
+
+		// do{
+
+		// 	if(!(o1 | o2))
+		// 	{
+		// 		done=true;
+		// 		accept=true;
+		// 	}
+		// 	else if(o1&o2) //ini kalo garisnya sama sekali gak berpotongan
+		// 	{
+		// 		done=true;
+		// 	}
+		// 	else
+		// 	{
+		// 		int x,y;
+		// 		ot=o1?o1:o2; //Nyari point mana yang ada di luar kotak, kemudian masukin ke ot
+		// 		if(ot & TOP)			// point is above the clip rectangle
+		// 		{
+		// 			y=ymin1;
+		// 			x = x1 + (ymin1 - y1) * (x2-x1) / (y2-y1);
+		// 		} 
+		// 		else if(ot & BOTTOM) 	// point is below the clip rectangle
+		// 		{
+		// 			y=ymax1;
+		// 			x = x1 + (ymax1 - y1) * (x2 - x1) / (y2-y1);
+		// 		}
+		// 		else if(ot & RIGHT)		// point is to the right of clip rectangle //jika ot & RIGHT != 0
+		// 		{
+		// 			if(kiriAtas.x == kiriBawah.x && kananAtas.x == kananBawah.x)
+		// 				x=xmax1;
+		// 			else
+		// 			{
+		// 				float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+		// 				float m2 = ((float)kananBawah.y - (float)kananAtas.y) / ((float)kananBawah.x - (float)kananAtas.x);
+		// 				x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
+		// 				printf("x = %d\n", x);
+		// 			}
+		// 			y = y1 + (x - x1) * (y2 - y1) / (x2 - x1);
+		// 		}
+		// 		else if(ot & LEFT)		// point is to the left of clip rectangle
+		// 		{
+		// 			x=xmin1;
+		// 			//x = x1 + (ymin1 - y1) * (x2 - x1) / (y2 - y1);
+		// 			y = y1 + (xmin1 - x1) * (y2 - y1) / (x2 - x1);
+		// 		}
+		// 		if(ot==o1) //Jika yang diluar adalah o1
+		// 		{
+		// 			x1=x;
+		// 			y1=y;
+		// 			o1=compute(x1,y1,kiriAtas, kananAtas, kiriBawah, kananBawah);
+		// 		}
+		// 		else
+		// 		{
+		// 			x2=x;
+		// 			y2=y;
+		// 			o2=compute(x2,y2,kiriAtas, kananAtas, kiriBawah, kananBawah);
+		// 		}
+		// 	}
+		// }while(done==false);
+
+		// if(accept==true)
+		// {
+		// 	clippedLines.push_back(line(coord(x1, y1),coord(x2,y2)));
+		// }
 		drawFreeSquare(canvas, kiriAtas, kananAtas, kiriBawah, kananBawah, rgb(255,255,0));
 	}
 	return clippedLines;
