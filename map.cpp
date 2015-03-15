@@ -215,6 +215,14 @@ int angleY = 0;
 int running = 1;
 
 int leftClick = 0;
+int rightClick = 0;
+
+Coord windowLocation = coord(500, 300);
+int windowSize = 100;
+int xPlode = 0;
+Coord xPlodeLocation = coord(0,0);
+
+unsigned char loop = 1; // frame loop controller
 
 /* VIEW CONTROLLER: MOUSE AND KEYBOARD----------------------------------- */
 void *threadFuncMouse(void *arg){
@@ -232,6 +240,33 @@ void *threadFuncMouse(void *arg){
 		}else{
 			cameraX = cameraX + b[1] / mouseSensitivity;
 			cameraY = cameraY + b[2] / mouseSensitivity;
+		}
+    }
+    fclose(fmouse);
+
+	return NULL;
+}
+
+/* VIEW CONTROLLER: MOUSE AND KEYBOARD----------------------------------- */
+void *threadFuncMouse3D(void *arg){
+	FILE *fmouse;
+    char b[3];
+	fmouse = fopen("/dev/input/mice","r");
+	
+    while(1){
+		fread(b,sizeof(char),3,fmouse);
+		leftClick = (b[0]&1)>0;
+		rightClick = (b[0]&2)>0;
+	
+		if(leftClick == 1){
+			angleX = angleX - b[2] / mouseSensitivity;
+			angleY = angleY + b[1] / mouseSensitivity;
+		}else{
+			cameraX = cameraX + b[1] / mouseSensitivity;
+			cameraY = cameraY + b[2] / mouseSensitivity;
+		}
+		if(rightClick == 1) {
+			loop = 0;
 		}
     }
     fclose(fmouse);
@@ -518,7 +553,6 @@ int main() {
 	}
 		
 	// prepare environment controller
-	unsigned char loop = 1; // frame loop controller
 	Frame cFrame; // composition frame (Video RAM)
 	
 	// setup colorpicker ================================================================================================================================
@@ -526,6 +560,14 @@ int main() {
 	int canvasWidth = 1300;
 	int canvasHeight = 700;
 	Coord canvasPosition = coord(screenX/2,screenY/2);
+	
+	// prepare mouse controller
+	FILE *fmouse;
+	char mouseRaw[3];
+	fmouse = fopen("/dev/input/mice","r");
+	Coord mouse; // mouse internal counter
+	mouse.x = 0;
+	mouse.y = 0;
 	
 	// colorpicker initial properties
 	flushFrame(&canvas, rgb(255,255,255)); // prepare canvas
@@ -612,7 +654,7 @@ int main() {
 	
 	
 	pthread_t pth_mouse;
-	pthread_create(&pth_mouse,NULL,threadFuncMouse,NULL);
+	pthread_create(&pth_mouse,NULL,threadFuncMouse3D,NULL);
 	
 	pthread_t pth_keyboard;
 	pthread_create(&pth_keyboard,NULL,threadFuncKeyboard,NULL);
@@ -666,7 +708,7 @@ int main() {
 	vector<Line> croppedLines;
 	
 	pthread_t pth;
-	pthread_create(&pth,NULL,threadFunc,NULL);
+	pthread_create(&pth,NULL,threadFuncMouse,NULL);
 	
 	//egg
 	int mul = 0;
