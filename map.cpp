@@ -151,15 +151,6 @@ void fillShape(Frame *frame, int xOffset, int yOffset, int startY, int shapeHeig
 	}
 }
 
-//~ Coord lengthEndPoint(Coord startingPoint, int angle, int length){
-	//~ Coord endPoint;
-	//~ 
-	//~ endPoint.x = int((double)length * cos((double)angle * PI / (double)180)) + startingPoint.x;
-	//~ endPoint.y = int((double)length * sin((double)angle * PI / (double)180)) + startingPoint.y;
-	//~ 
-	//~ return endPoint;
-//~ }
-
 //origin, pojok kiri atas viewPort
 void viewPort(Frame *frame, Coord origin, int viewportSize, int windowSize, std::vector<Line> originalLines){
 	// viewport frame
@@ -287,7 +278,7 @@ void warzone(FrameBuffer *fb, Frame *cF,Frame *frm , int canvasWidth , int canva
 	
 	int planeNotHit = 0 ; 
 	
-	while (planeNotHit<50) {
+	while (planeNotHit<52) {
 		// clean composition frame
 		flushFrame(cF, rgb(33,33,33));
 				
@@ -491,91 +482,11 @@ int main() {
 	int canvasWidth = 1100;
 	int canvasHeight = 600;
 	Coord canvasPosition = coord(screenX/2,screenY/2);
+	RGB colorShip = rgb(99,99,99);
 	
 	warzone(&fb,&cFrame,&canvas,canvasWidth,canvasHeight,canvasPosition,colorShip);
 	
 	
-	//~ // viewport properties
-	//~ int viewportSize = 300;
-	//~ Coord viewportOrigin = coord(999, 399);
-	//~ 
-	//~ //baling
-	//~ int balingCounter=0;
-	//~ int planeVelocity = 20;
-	//~ int planeXPosition = canvasWidth;
-	//~ int planeYPosition = 270;
-	//~ int kapalXPosition = 250;
-	//~ int kapalVelocity = 15;
-	//~ int kapalYPosition = 250;
-//~ 
-//~ 
-	//~ vector<Line> mapLines;
-	//~ vector<Line> heliLines;
-	//~ vector<Line> kapalLines;
-	//~ 
-	//~ vector<Line> allLines;
-	//~ vector<Line> croppedLines;
-		
-	
-	//~ pthread_t pth;
-	//~ pthread_create(&pth,NULL,threadFunc,NULL);
-	
-	//~ //egg
-	//~ int mul = 0;
-		//~ 
-
-// -----------------	
-		//~ //clean vector
-		//~ allLines.clear();
-		//~ 
-		//~ //Nambahin Lines biar semua jadi 1
-		//~ mapLines = drawPeta(&canvas, coord(0,0), rgb(50,150,0));
-		//~ 
-		//~ heliLines=rotateBaling(&canvas,coord(planeXPosition -= planeVelocity,planeYPosition),rgb(255,255,255),balingCounter++);
-		//~ 
-		//~ if(kapalXPosition>508 && kapalYPosition >50) {  //atas
-			//~ kapalLines=drawKapalVertikal(&canvas,coord(kapalXPosition,kapalYPosition -= kapalVelocity),rgb(99,99,99));}
-			//~ else if (kapalXPosition>120 && kapalYPosition >319) {  //kanan
-				//~ kapalLines=drawKapal(&canvas,coord(kapalXPosition -= -kapalVelocity,kapalYPosition),rgb(99,99,99));}
-			//~ else if (kapalXPosition >235 && kapalYPosition<51){ //kiri 
-				//~ kapalLines=drawKapal(&canvas,coord(kapalXPosition -= kapalVelocity,kapalYPosition),rgb(99,99,99));}
-			//~ else {kapalLines=drawKapalVertikal(&canvas,coord(kapalXPosition,kapalYPosition -= -kapalVelocity),rgb(99,99,99));} //bawah
-		//~ allLines.insert(allLines.end(), kapalLines.begin(), kapalLines.end());
-		//~ 
-		//~ allLines.insert(allLines.end(), mapLines.begin(), mapLines.end());
-		//~ allLines.insert(allLines.end(), heliLines.begin(), heliLines.end());		
-		//~ 
-		//~ //Draw window and get cropped lines								//100 = 1/2 size window
-		//~ croppedLines = cohen_sutherland(&canvas, allLines, windowLocation, windowSize / 2);
-		//~ 
-													//~ //200 = size window
-		//~ viewPort(&canvas, viewportOrigin, viewportSize, windowSize, croppedLines);		
-		//~ 
-		//~ if (planeXPosition <= -15) {
-			//~ planeXPosition = canvasWidth+15;
-		//~ }
-		//~ 
-		//~ if (xPlode == 1) {
-			//~ mul = 1;
-			//~ xPlode = 0;
-			//~ xPlodeLocation = windowLocation;
-		//~ }
-		//~ 
-		//~ animateExplosion(&canvas, mul, xPlodeLocation);
-		//~ 
-		//~ if (mul == 21) {
-			//~ mul = 0;
-			//~ xPlode = 0;
-			//~ xPlodeLocation = coord(0,0);
-		//~ }
-		//~ if (mul >= 1) {
-			//~ mul++;
-		//~ }
-
-		//show frame
-		//~ showFrame(&cFrame,&fb);	
-	//~ }
-
 	/* Cleanup --------------------------------------------------------- */
 	//~ int running= 0;
 	//~ pthread_join(pth,NULL);
