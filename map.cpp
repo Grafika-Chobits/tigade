@@ -151,14 +151,14 @@ void fillShape(Frame *frame, int xOffset, int yOffset, int startY, int shapeHeig
 	}
 }
 
-Coord lengthEndPoint(Coord startingPoint, int angle, int length){
-	Coord endPoint;
-	
-	endPoint.x = int((double)length * cos((double)angle * PI / (double)180)) + startingPoint.x;
-	endPoint.y = int((double)length * sin((double)angle * PI / (double)180)) + startingPoint.y;
-	
-	return endPoint;
-}
+//~ Coord lengthEndPoint(Coord startingPoint, int angle, int length){
+	//~ Coord endPoint;
+	//~ 
+	//~ endPoint.x = int((double)length * cos((double)angle * PI / (double)180)) + startingPoint.x;
+	//~ endPoint.y = int((double)length * sin((double)angle * PI / (double)180)) + startingPoint.y;
+	//~ 
+	//~ return endPoint;
+//~ }
 
 //origin, pojok kiri atas viewPort
 void viewPort(Frame *frame, Coord origin, int viewportSize, int windowSize, std::vector<Line> originalLines){
@@ -224,10 +224,10 @@ void *threadFunc(void *arg)
 	return NULL;
 }
 
-//tes
+//fadeOut 
 void fadeOut (Frame *frm, int lvl){
-	for (int y = 0; y < 500; y++ ){
-    for (int x = 0; x < 1000; x++ ) {
+	for (int y = 0; y < 600; y++ ){
+    for (int x = 0; x < 1100; x++ ) {
 	//bagi per lvl
 	frm->px[x][y].r=frm->px[x][y].r/lvl;
 	frm->px[x][y].g=frm->px[x][y].g/lvl;
@@ -237,16 +237,19 @@ void fadeOut (Frame *frm, int lvl){
  	}
  }
  
-void warzone(FrameBuffer *fb, Frame *cF,Frame *frm , int canvasWidth , int canvasHeight ,Coord canvasPosition){
+void warzone(FrameBuffer *fb, Frame *cF,Frame *frm , int canvasWidth , int canvasHeight ,Coord canvasPosition,RGB colorShip){
 	
-	// prepare ship
-	int shipVelocity = 5; // velocity (pixel/ loop)
+	// prepare plane & ship
 	int planeVelocity = 10;
+	int shipVelocity = 5; // velocity (pixel/ loop)
 	
 	int shipXPosition = canvasWidth - 80;
-	int shipYPosition = 490;
+	int shipYPosition = 598;
+
 	int planeXPosition = canvasWidth;
 	int planeYPosition = 50;
+	int balingXPosition = planeXPosition+120;
+	int balingYPosition = planeYPosition + 10;
 	int explosionMul = 0;
 	
 	// prepare ammunition
@@ -259,31 +262,32 @@ void warzone(FrameBuffer *fb, Frame *cF,Frame *frm , int canvasWidth , int canva
 	
 	firstAmmunitionCoordinate.x = shipXPosition;
 	firstAmmunitionCoordinate.y = shipYPosition - 120;
-	secondAmmunitionCoordinate.y = shipYPosition - 120;
-	
-	
-	//prepare Bomb
-	Coord firstBombCoordinate;
-	int isFirstBombReleased = 1;
-	Coord secondBombCoordinate;
-	int isSecondBombReleased = 0;
-	int bombVelocity = 10;
-	int bombLength = 20;
-	
-	firstBombCoordinate.x = planeXPosition;
-	firstBombCoordinate.y = planeYPosition + 120;
-	secondBombCoordinate.y = planeYPosition - 120;
-	
+	secondAmmunitionCoordinate.y = shipYPosition - 120;	
 	
 	int i; //for drawing.
 	int MoveLeft = 1;
 	int stickmanCounter = 0;
 	
 	int isXploded = 0;
-	int planeNotHit = 0 ; 
 	Coord coordXplosion;
-
-	 while (planeNotHit!=100) {
+	int balingCounter=0;
+	
+	int chuteX = 400;
+	int chuteY = 50;
+	int stickmanX = 1350;
+	int stickmanEncounter = 0;
+	int chutesize = 50;
+	int deployed = 0;
+	
+	float bVel = -5;
+	float bVelX = 5;
+	Coord coordBan;
+	coordBan.x = canvasWidth/2;
+	coordBan.y = canvasHeight/2;
+	
+	int planeNotHit = 0 ; 
+	
+	while (planeNotHit<50) {
 		// clean composition frame
 		flushFrame(cF, rgb(33,33,33));
 				
@@ -291,66 +295,60 @@ void warzone(FrameBuffer *fb, Frame *cF,Frame *frm , int canvasWidth , int canva
 		
 		// clean canvas
 		flushFrame(frm, rgb(0,0,0));
-
+		
 		// draw ship
-		drawShip(frm, coord(shipXPosition,shipYPosition), rgb(99,99,99));
+		drawShip(frm, coord(shipXPosition -= shipVelocity,shipYPosition),colorShip);
 		
 		//drawFish
-		drawFish(frm, coord(shipXPosition, shipYPosition), rgb(99,99,99));
-
-		//colorFlood
-		colorFlood(frm,shipXPosition-15,shipYPosition-1,rgb(99,99,99));
-				
+		drawFish(frm, coord(shipXPosition, shipYPosition),colorShip);
+		
+		//colorFish
+		colorFlood(frm,shipXPosition-15,shipYPosition-1,colorShip);
+		colorFlood(frm,shipXPosition+15,shipYPosition-1,colorShip);
+		
 		// draw stickman and cannon
-		drawStickmanAndCannon(frm, coord(shipXPosition,shipYPosition), rgb(99,99,99), stickmanCounter++);
+		drawStickmanAndCannon(frm, coord(shipXPosition,shipYPosition),colorShip, stickmanCounter++);
 				
 		// draw plane
-		drawPlane(frm, coord(planeXPosition -= planeVelocity, planeYPosition), rgb(99, 99, 99));
-		
+		if(isXploded == 0){
+			drawPlane(frm, coord(planeXPosition -= planeVelocity, planeYPosition), rgb(99, 99, 99));
+
+		//draw Bird
 		drawBird(frm,coord(planeXPosition+60,planeYPosition),rgb(99,99,99));
 		
 		colorFlood(frm,planeXPosition+19,planeYPosition,rgb(99,99,99)); // dpn pesawat (kiri)
 		colorFlood(frm,planeXPosition+162,planeYPosition,rgb(99,99,99)); //belakangnya pesawat (kanan)
-		colorFlood(frm,planeXPosition+35,planeYPosition-4,rgb(99,99,99)); //diatas gambar burung
-		
-		
-		// Plane Bomb
-		if(isFirstBombReleased){
-			firstBombCoordinate.y+=bombVelocity;
-			
-			if(firstBombCoordinate.y >= 2 * canvasHeight/3 && !isSecondBombReleased){
-				isSecondBombReleased = 1;
-				secondBombCoordinate.x = planeXPosition;
-				secondBombCoordinate.y = planeYPosition + 15;
-			}
-			
-			if(firstBombCoordinate.y >= screenY - ((screenY - canvasHeight)/2)){
-				isFirstBombReleased = 0;
-			}
-			
-			drawBomb(frm, firstBombCoordinate, rgb(99, 99, 99));
-			drawAmmunition(frm, firstBombCoordinate, 3, ammunitionLength, rgb(99, 99, 99));
+		colorFlood(frm,planeXPosition+35,planeYPosition-4,rgb(99,99,99)); //diatas gambar burung	
 		}
 		
-		if(isSecondBombReleased){
-			secondBombCoordinate.y+=bombVelocity;
-			
-			if(secondBombCoordinate.y >= canvasHeight/3 && !isFirstBombReleased){
-				isFirstBombReleased = 1;
-				firstBombCoordinate.x = planeXPosition;
-				firstBombCoordinate.y = planeYPosition + 15;
-			}
-			
-			if(secondBombCoordinate.y >= screenY - 150){
-				isSecondBombReleased = 0;
-			}
-			
-			drawBomb(frm, secondBombCoordinate, rgb(99, 99, 99));
-			drawAmmunition(frm, secondBombCoordinate, 3, ammunitionLength, rgb(99, 99, 99));
+		// draw parachute
+		if(isXploded){
+			deployed = 1;
 		}
+		if(deployed)
+		{ 	
+			if(chutesize <= 150){
+				chutesize++;
+			}
+			drawParachute(frm, coord(chuteX+=4, chuteY+=1), rgb(99, 99, 99), chutesize);
+			animateBan(frm, &coordBan, rgb(255, 99, 99), &bVel, &bVelX);
+		}
+		
+		if(stickmanEncounter){
+			drawWalkingStickman(frm, coord(stickmanX -= 4, 503), rgb(99, 99, 99));
+		}
+		if(deployed)
+		{
+			rotateBalingBesar(frm,coord(planeXPosition + 160,balingYPosition+=planeVelocity),rgb(255,255,255),balingCounter--);
+		}
+		else
+		{
+			rotateBalingBesar(frm,coord(planeXPosition + 160,planeYPosition+10),rgb(255,255,255),balingCounter--);
+		}
+	
 		
 		// stickman ammunition
-		if(isFirstAmmunitionReleased){
+		if(isFirstAmmunitionReleased && !deployed){
 			firstAmmunitionCoordinate.y-=ammunitionVelocity;
 			
 			if(firstAmmunitionCoordinate.y <= canvasHeight/3 && !isSecondAmmunitionReleased){
@@ -367,7 +365,7 @@ void warzone(FrameBuffer *fb, Frame *cF,Frame *frm , int canvasWidth , int canva
 			drawAmmunition(frm, firstAmmunitionCoordinate, 3, ammunitionLength, rgb(99, 99, 99));
 		}
 		
-		if(isSecondAmmunitionReleased){
+		if(isSecondAmmunitionReleased && !deployed){
 			secondAmmunitionCoordinate.y-=ammunitionVelocity;
 			
 			if(secondAmmunitionCoordinate.y <= canvasHeight/3 && !isFirstAmmunitionReleased){
@@ -388,57 +386,53 @@ void warzone(FrameBuffer *fb, Frame *cF,Frame *frm , int canvasWidth , int canva
 		if (isInBound(coord(firstAmmunitionCoordinate.x, firstAmmunitionCoordinate.y), coord(planeXPosition-5, planeYPosition-15), coord(planeXPosition+170, planeYPosition+15))) {
 			coordXplosion = firstAmmunitionCoordinate;
 			isXploded = 1;
-			planeNotHit=1;
-			//printf("boom");	
+			//printf("boom");
 		} else if (isInBound(coord(secondAmmunitionCoordinate.x, secondAmmunitionCoordinate.y), coord(planeXPosition-5, planeYPosition-15), coord(planeXPosition+170, planeYPosition+15))) {
 			coordXplosion = secondAmmunitionCoordinate;
-			isXploded = 1;
-			planeNotHit=1;
-			//printf("boom");
-		}
-		else if (isInBound(coord(firstBombCoordinate.x, firstBombCoordinate.y), coord(shipXPosition-50, shipYPosition-100), coord(shipXPosition+50, shipYPosition+30))) {
-			coordXplosion = firstBombCoordinate;
-			isXploded = 1;
-			//printf("boom");
-		} else if (isInBound(coord(secondBombCoordinate.x, secondBombCoordinate.y), coord(shipXPosition-50, shipYPosition-100), coord(shipXPosition+50, shipYPosition+30))) {
-			coordXplosion = secondBombCoordinate;
 			isXploded = 1;
 			//printf("boom");
 		}
 		if (isXploded == 1) {
+			if(planeNotHit == 0){
+				planeNotHit =1;}
 			animateExplosion(frm, explosionMul, coordXplosion);
 			explosionMul++;
 			if(explosionMul >= 20){
 				explosionMul = 0;
-				isXploded = 0;
-			}
+				//isXploded = 0;
+			}			
 		}
 		
 		if(planeXPosition <= -170){
 			planeXPosition = canvasWidth;
+			balingXPosition = canvasWidth + 120;
 		}
 		
 		if(planeXPosition == screenX/2 - canvasWidth/2 - 165){
 			planeXPosition = screenX/2 + canvasWidth/2;
 		}
 		
-		if(shipXPosition == 80){
-			MoveLeft = 0;
-		} 
+		if(shipXPosition <= -85){
+			shipXPosition = canvasWidth + 80;
+		}
 		
-		if(shipXPosition == canvasWidth - 80){
-			MoveLeft = 1;
-		} 
+		if(stickmanX <= -70){
+			stickmanX = canvasWidth;
+		}
 		
-		if(MoveLeft){
-			shipXPosition -= shipVelocity;
-		}else{
-			shipXPosition += shipVelocity;
+		if(planeXPosition == screenX/2 - canvasWidth/2 - 165){
+			planeXPosition = screenX/2 + canvasWidth/2;
+		}
+		
+		if(chuteX >= canvasWidth + chutesize * 2){
+			stickmanEncounter = 1;
 		}
 
-		if (planeNotHit>0){ 
+		if (planeNotHit>0){
 			planeNotHit++;
-			fadeOut(frm,planeNotHit);
+			if(planeNotHit>35){
+				fadeOut(frm,planeNotHit-35);
+			}
 		}
 showFrame(cF,fb);	
 }
@@ -494,11 +488,13 @@ int main() {
 	// prepare canvas
 	Frame canvas;
 	flushFrame(&canvas, rgb(0,0,0));
-	int canvasWidth = 1000;
-	int canvasHeight = 500;
+	int canvasWidth = 1100;
+	int canvasHeight = 600;
 	Coord canvasPosition = coord(screenX/2,screenY/2);
 	
-	warzone(&fb,&cFrame,&canvas,canvasWidth,canvasHeight,canvasPosition);
+	warzone(&fb,&cFrame,&canvas,canvasWidth,canvasHeight,canvasPosition,colorShip);
+	
+	
 	//~ // viewport properties
 	//~ int viewportSize = 300;
 	//~ Coord viewportOrigin = coord(999, 399);

@@ -532,6 +532,47 @@ std::vector<Line> drawBaling(Frame *frm , Coord loc,int x1,int x2,int x3,int x4,
 	return balingLine;
 }
 
+void drawBalingBesar(Frame *frm , Coord loc,int x1,int x2,int x3,int x4,int y1,int y2,int y3,int y4 ,RGB color){
+	int xOffset = loc.x-x1;
+	int yOffset = loc.y-y1;
+
+	plotCircle(frm,loc.x,loc.y,15,color);
+	std::vector<Coord> balingCoordinates;
+	balingCoordinates.push_back(loc);
+	balingCoordinates.push_back(coord(x1, y1));
+	balingCoordinates.push_back(coord(x2, y2));
+	balingCoordinates.push_back(coord(x3,y3));
+	balingCoordinates.push_back(coord(x4,y4));
+
+	// Gambar baling-baling
+	for(int i = 0; i < balingCoordinates.size(); i++){
+		int x0, y0, x1, y1;
+		if(i < balingCoordinates.size() - 1){
+			x0 = balingCoordinates.at(i).x;
+			y0 = balingCoordinates.at(i).y;
+			x1 = balingCoordinates.at(i + 1).x;
+			y1 = balingCoordinates.at(i + 1).y;
+		}else{
+			x0 = balingCoordinates.at(balingCoordinates.size() - 1).x;
+			y0 = balingCoordinates.at(balingCoordinates.size() - 1).y;
+			x1 = balingCoordinates.at(0).x;
+			y1 = balingCoordinates.at(0).y;
+		}
+		plotLine(frm, x0, y0, x1, y1, color);
+	}
+
+	int balingHeight = 80;
+	//fillShape(frm, loc.x, loc.y, loc.y-40, balingHeight, balingCoordinates, color);
+
+	// plotLine(frm,loc.x,loc.y,x1,y1,color);
+	// plotLine(frm,loc.x,loc.y,x2,y2,color);
+	// plotLine(frm,x1,y1,x2,y2,color);
+	
+	// plotLine(frm,loc.x,loc.y,x3,y3,rgb(255,0,0));
+	// plotLine(frm,loc.x,loc.y,x4,y4,color);
+	// plotLine(frm,x3,y3,x4,y4,color);
+}
+
 std::vector<Line> rotateBaling(Frame *frm,Coord loc, RGB col ,int counter ){
 	int x1=loc.x+10; int y1=loc.y+2;
 	int x2=loc.x+10; int y2=loc.y-2;
@@ -555,6 +596,30 @@ std::vector<Line> rotateBaling(Frame *frm,Coord loc, RGB col ,int counter ){
 	balingLine=drawBaling(frm,loc,x1,x2,x3,x4,y1,y2,y3,y4,col);
 	return balingLine;
 }
+
+void rotateBalingBesar(Frame *frm,Coord loc, RGB col ,int counter ){
+	int x1=loc.x+40; int y1=loc.y+5;
+	int x2=loc.x+40; int y2=loc.y-5;
+	int x3=loc.x-40; int y3=loc.y+5;
+	int x4=loc.x-40; int y4=loc.y-5;
+	
+	
+	int temp;
+	temp=rotasiX(x1,y1,loc,counter*10);
+	y1=rotasiY(x1,y1,loc,counter*10);
+	x1=temp;
+	temp=rotasiX(x2,y2,loc,counter*10);
+	y2=rotasiY(x2,y2,loc,counter*10);
+	x2=temp;
+	temp=rotasiX(x3,y3,loc,counter*10);	
+	y3=rotasiY(x3,y3,loc,counter*10);
+	x3=temp;
+	temp=rotasiX(x4,y4,loc,counter*10);
+	y4=rotasiY(x4,y4,loc,counter*10);
+	x4=temp;
+	drawBalingBesar(frm,loc,x1,x2,x3,x4,y1,y2,y3,y4,col);
+	}
+
 
 void drawAmmunition(Frame *frame, Coord upperBoundPosition, int ammunitionWidth, int ammunitionLength, RGB color){
 	plotLine(frame, upperBoundPosition.x, upperBoundPosition.y, upperBoundPosition.x, upperBoundPosition.y + ammunitionLength, color);
@@ -718,10 +783,59 @@ void drawShip(Frame *frame, Coord center, RGB color)
 		plotLine(frame, x0, y0, x1, y1, color);
 	}
 	
-	// Dummy pattern's coordinate
+	// Coloring ship using scanline algorithm
+	//~ for(int i = 1; i <= height; i++){
+		//~ vector<Coord> shipIntersectionPoint = intersectionGenerator(i, shipCoordinates);
+//~ 
+		//~ if(shipIntersectionPoint.size() % 2 != 0){
+			//~ unique(shipIntersectionPoint.begin(), shipIntersectionPoint.end(), compareSameAxis);
+			//~ shipIntersectionPoint.erase(shipIntersectionPoint.end() - 1);
+		//~ }
+		//~ 
+		//~ for(int j = 0; j < shipIntersectionPoint.size() - 1; j++){
+			//~ if(j % 2 == 0){
+				//~ int x0 = shipIntersectionPoint.at(j).x + xShipCoordinate;
+				//~ int y0 = shipIntersectionPoint.at(j).y + yShipCoordinate;
+				//~ int x1 = shipIntersectionPoint.at(j + 1).x + xShipCoordinate;
+				//~ int y1 = shipIntersectionPoint.at(j + 1).y + yShipCoordinate;
+				//~ 
+				//~ plotLine(frame, x0, y0, x1, y1, color);
+			//~ }
+		//~ }		
+	//~ }	
+
+}
+
+void drawParachute(Frame *frame, Coord center, RGB color, int size){
+	int parachuteRadius = size;
+	int parachuteDiameter = parachuteRadius * 2;
 	
-	vector<Coord> patternCoordinates = getFishCoordinate(coord(50,20));
+	// parachute upper border
+	plotHalfCircle(frame, center.x, center.y, parachuteRadius, color);
 	
+	// parachute bottom border
+	plotHalfCircle(frame, center.x - parachuteDiameter / 3, center.y, parachuteRadius / 3, color);
+	plotHalfCircle(frame, center.x, center.y, parachuteRadius / 3, color);
+	plotHalfCircle(frame, center.x + parachuteDiameter / 3, center.y, parachuteRadius / 3, color);
+	
+	// parachute string
+	plotLine(frame, center.x - parachuteRadius, center.y, center.x - parachuteRadius / 6, center.y + parachuteRadius, color); // left
+	plotLine(frame, center.x + parachuteRadius, center.y, center.x + parachuteRadius / 6, center.y + parachuteRadius, color); // right
+	
+	// stickman
+	plotCircle(frame, center.x, center.y + parachuteRadius - parachuteRadius / 12, parachuteRadius / 12, color); //head
+	
+	int bodyStartingPoint = center.y + parachuteRadius - parachuteRadius / 10 + parachuteRadius / 10;
+	plotLine(frame, center.x, bodyStartingPoint, center.x, bodyStartingPoint + parachuteRadius / 5, color); // body
+	
+	int legStartingPoint = bodyStartingPoint + parachuteRadius / 5;
+	plotLine(frame, center.x, legStartingPoint, center.x + parachuteRadius / 13, legStartingPoint + parachuteRadius / 10, color); // right leg
+	plotLine(frame, center.x, legStartingPoint, center.x - parachuteRadius / 13, legStartingPoint + parachuteRadius / 10, color); // left leg
+	
+	plotLine(frame, center.x, bodyStartingPoint, center.x - parachuteRadius / 10, bodyStartingPoint + parachuteRadius / 10, color);
+	plotLine(frame, center.x, bodyStartingPoint, center.x + parachuteRadius / 10, bodyStartingPoint + parachuteRadius / 10, color);
+	plotLine(frame, center.x - parachuteRadius / 10, bodyStartingPoint + parachuteRadius / 10, center.x - parachuteRadius / 6, center.y + parachuteRadius, color);
+	plotLine(frame, center.x + parachuteRadius / 10, bodyStartingPoint + parachuteRadius / 10, center.x + parachuteRadius / 6, center.y + parachuteRadius, color);
 }
 
 void drawFish(Frame  *frame, Coord center, RGB color) {
@@ -781,7 +895,7 @@ vector<Coord> getFishCoordinate(Coord center) {
 }
 
 void colorFlood(Frame* frm,int x, int y,RGB color){	
-if ((isColorEqual(frm->px[x][y],color)==1)|| x<1 || x>999 || y<1 || y>499 ){
+if ((isColorEqual(frm->px[x][y],color)==1)|| x<1 || x>1199 || y<1 || y>599 ){
 	//do nothing
 	} 
 else{
@@ -838,4 +952,336 @@ void drawStickmanAndCannon(Frame *frame, Coord shipPosition, RGB color, int coun
 		
 	//Draw stickman
 	drawStickman(frame, coord(shipPosition.x - 30, shipPosition.y - 90), 15, rgb(99,99,99),counter);
+}
+void animateBan(Frame *frm, Coord *loc, RGB color, float *bVel, float *bVelX) {
+	int g = 1;
+	int tV = 1500;
+	float cB = 0.9;
+	if (*bVel < tV) {
+		*bVel = *bVel+g;
+	}
+	if (loc->y > 590) {
+		*bVel = (*bVel*-1);
+	}
+	*bVel = *bVel-(*bVel*0.03);
+	*bVelX = *bVelX-(*bVelX*0.03);
+	loc->x = loc->x+*bVelX;
+	loc->y = loc->y+*bVel;
+	plotCircle(frm,loc->x,loc->y,5,color);
+}
+void drawWalkingStickman(Frame *frame, Coord center, RGB color){
+	int bodyLength = 50;
+	int rightUpperArmLength = 30;
+	int rightLowerArmLength = 20;
+	int leftUpperArmLength = 30;
+	int leftLowerArmLength = 20;
+	int rightUpperLegLength = 30;
+	int rightLowerLegLength = 20;
+	int leftUpperLegLength = 30;
+	int leftLowerLegLength = 20;
+	
+	static int centerPositionY = center.y;
+	
+	// head
+	plotCircle(frame, center.x, centerPositionY - 20, 20, color);
+	
+	// body	
+	Coord bodyEndPoint = lengthEndPoint(coord(center.x, centerPositionY), 88, bodyLength);
+	plotLine(frame, center.x, centerPositionY, bodyEndPoint.x, bodyEndPoint.y, color);
+	
+	// right upper arm
+	Coord rightUpperArmEndPoint;
+	static int rightUpperArmRotation = 125;
+	{
+		static int moveBackwardArm = 1;
+		
+		if(rightUpperArmRotation == 125){
+			moveBackwardArm = 1;
+		}
+		if(rightUpperArmRotation == 65){
+			moveBackwardArm = 0;
+		}
+		
+		
+		if(moveBackwardArm){
+			rightUpperArmRotation -= 5;
+		}else{
+			rightUpperArmRotation += 5;
+		}
+		
+		rightUpperArmEndPoint = lengthEndPoint(coord(center.x, centerPositionY), rightUpperArmRotation, rightUpperArmLength);
+		plotLine(frame, center.x, centerPositionY, rightUpperArmEndPoint.x, rightUpperArmEndPoint.y, color);
+	}
+	
+	// right lower arm
+	Coord rightLowerArmEndPoint = lengthEndPoint(coord(rightUpperArmEndPoint.x, rightUpperArmEndPoint.y), rightUpperArmRotation + 50, rightLowerArmLength);
+	plotLine(frame, rightUpperArmEndPoint.x, rightUpperArmEndPoint.y, rightLowerArmEndPoint.x, rightLowerArmEndPoint.y, color);
+	
+	// left upper arm
+	Coord leftUpperArmEndPoint;
+	static int leftUpperArmRotation = 65;
+	{
+		
+		static int moveForwardArm = 1;
+		
+		if(leftUpperArmRotation == 65){
+			moveForwardArm = 1;
+		}
+		if(leftUpperArmRotation == 125){
+			moveForwardArm = 0;
+		}
+		
+		if(moveForwardArm){
+			leftUpperArmRotation += 5;
+		}else{
+			leftUpperArmRotation -= 5;
+		}
+		
+		leftUpperArmEndPoint = lengthEndPoint(coord(center.x, centerPositionY), leftUpperArmRotation, leftUpperArmLength);
+		plotLine(frame, center.x, centerPositionY, leftUpperArmEndPoint.x, leftUpperArmEndPoint.y, color);
+	}
+	
+	// left lower arm
+	Coord leftLowerArmEndPoint = lengthEndPoint(coord(leftUpperArmEndPoint.x, leftUpperArmEndPoint.y), leftUpperArmRotation + 30, leftLowerArmLength);
+	plotLine(frame, leftUpperArmEndPoint.x, leftUpperArmEndPoint.y, leftLowerArmEndPoint.x, leftLowerArmEndPoint.y, color);
+	
+	// right upper leg
+	Coord rightUpperLegEndPoint;
+	static int rightUpperLegRotation = 125;
+	{
+		static int moveBackwardLeg = 1;
+		
+		if(rightUpperLegRotation == 125){
+			moveBackwardLeg = 1;
+		}
+		if(rightUpperLegRotation == 65){
+			moveBackwardLeg = 0;
+		}
+		
+		if(moveBackwardLeg){
+			rightUpperLegRotation -= 5;
+		}else{
+			rightUpperLegRotation += 5;
+		}
+		
+		rightUpperLegEndPoint = lengthEndPoint(coord(bodyEndPoint.x, bodyEndPoint.y), rightUpperLegRotation, rightUpperLegLength);
+		plotLine(frame, bodyEndPoint.x, bodyEndPoint.y, rightUpperLegEndPoint.x, rightUpperLegEndPoint.y, color);
+	}
+	
+	// right lower leg
+	{
+		static int rightLowerLegRotation = 95;
+		static int moveBackwardLeg = 1;
+		
+		if(rightUpperLegRotation == 125){
+			moveBackwardLeg = 1;
+			rightLowerLegRotation = 95;
+		}
+		if(rightUpperLegRotation == 65){
+			moveBackwardLeg = 0;
+			rightLowerLegRotation = 70;
+		}
+		
+		if(rightUpperLegRotation <= 90 ){
+			if(moveBackwardLeg){
+				rightLowerLegRotation = rightUpperLegRotation;
+			}else{
+				rightLowerLegRotation -= 5;
+			}
+		}else{
+			if(!moveBackwardLeg){
+				rightLowerLegRotation += 10;
+				if(centerPositionY <= center.y + 1){
+					centerPositionY++;
+				}
+			}else{
+				if(centerPositionY > center.y){
+					centerPositionY--;
+				}
+			}
+		}
+
+		Coord rightLowerLegEndPoint = lengthEndPoint(coord(rightUpperLegEndPoint.x, rightUpperLegEndPoint.y), rightLowerLegRotation, rightLowerLegLength);
+		plotLine(frame, rightUpperLegEndPoint.x, rightUpperLegEndPoint.y, rightLowerLegEndPoint.x, rightLowerLegEndPoint.y, color);
+	}
+	
+	// left upper leg
+	Coord leftUpperLegEndPoint;
+	static int leftUpperLegRotation = 65;
+	{
+		static int moveForwardLeg = 1;
+		
+		if(leftUpperLegRotation == 125){
+			moveForwardLeg = 0;
+		}
+		if(leftUpperLegRotation == 65){
+			moveForwardLeg = 1;
+		}
+		
+		if(moveForwardLeg){
+			leftUpperLegRotation += 5;
+		}else{
+			leftUpperLegRotation -= 5;
+		}
+		
+		leftUpperLegEndPoint = lengthEndPoint(coord(bodyEndPoint.x, bodyEndPoint.y), leftUpperLegRotation, leftUpperLegLength);
+		plotLine(frame, bodyEndPoint.x, bodyEndPoint.y, leftUpperLegEndPoint.x, leftUpperLegEndPoint.y, color);
+	}
+	
+	// left lower leg
+	{
+		static int leftLowerLegRotation = 70;
+		static int moveForwardLeg = 1;
+		
+		if(leftUpperLegRotation == 125){
+			moveForwardLeg = 0;
+			leftLowerLegRotation = 95;
+		}
+		if(leftUpperLegRotation == 65){
+			moveForwardLeg = 1;
+			leftLowerLegRotation = 70;
+		}
+		
+		if(leftUpperLegRotation <= 90 ){
+			if(moveForwardLeg){
+				leftLowerLegRotation -= 5;
+			}else{
+				leftLowerLegRotation = leftUpperLegRotation;
+			}
+		}else{
+			if(moveForwardLeg){
+				leftLowerLegRotation += 10;
+				if(centerPositionY <= center.y + 1){
+					centerPositionY++;
+				}
+			}else{
+				if(centerPositionY > center.y){
+					centerPositionY--;
+				}
+			}
+		}
+		
+		Coord leftLowerLegEndPoint = lengthEndPoint(coord(leftUpperLegEndPoint.x, leftUpperLegEndPoint.y), leftLowerLegRotation, leftLowerLegLength);
+		plotLine(frame, leftUpperLegEndPoint.x, leftUpperLegEndPoint.y, leftLowerLegEndPoint.x, leftLowerLegEndPoint.y, color);
+	}
+}
+//~ /* FUNCTIONS FOR SCANLINE ALGORITHM ---------------------------------------------------- */
+//~ 
+//~ bool isSlopeEqualsZero(int y0, int y1){
+	//~ if(y0 == y1){
+		//~ return true;
+	//~ }else{
+		//~ return false;
+	//~ }
+//~ }
+//~ 
+//~ bool isInBetween(int y0, int y1, int yTest){
+	//~ if((yTest >= y0 && yTest <= y1 || yTest >= y1 && yTest <= y0) && !isSlopeEqualsZero(y0, y1)){
+		//~ return true;
+	//~ }else{
+		//~ return false;
+	//~ }
+//~ }
+//~ 
+//~ /* Function to calculate intersection between line (a,b) and line with slope 0 */
+//~ Coord intersection(Coord a, Coord b, int y){
+	//~ int x;
+	//~ double slope;
+	//~ 
+	//~ if(b.x == a.x){
+		//~ x = a.x;
+	//~ }else{
+		//~ slope = (double)(b.y - a.y) / (double)(b.x - a.x);
+		//~ x = round(((double)(y - a.y) / slope) + (double)a.x);
+	//~ }
+	//~ 
+	//~ return coord(x, y);
+//~ }
+//~ 
+//~ bool compareByAxis(const s_coord &a, const s_coord &b){
+	//~ return a.x <= b.x;
+//~ }
+//~ 
+//~ bool compareSameAxis(const s_coord &a, const s_coord &b){
+	//~ return a.x == b.x;
+//~ }
+//~ 
+//~ bool operator==(const Coord& lhs, const Coord& rhs) {
+	//~ if(lhs.x==rhs.x && lhs.y==rhs.y)
+		//~ return true;
+	//~ return false;
+//~ }
+//~ 
+//~ bool isLocalMaxima(const Coord& a, const Coord& b, const Coord& titikPotong) {
+	//~ return ((titikPotong.y<a.y && titikPotong.y<b.y) || (titikPotong.y>a.y && titikPotong.y>b.y));
+//~ }
+
+//~ vector<Coord> intersectionGenerator(int y, vector<Coord> polygon){
+	//~ vector<Coord> intersectionPoint;
+	//~ Coord prevTipot = coord(-9999,-9999);
+	//~ for(int i = 0; i < polygon.size(); i++){
+		//~ if(i == polygon.size() - 1){
+			//~ if(isInBetween(polygon.at(i).y, polygon.at(0).y, y)){				
+				//~ Coord a = coord(polygon.at(i).x, polygon.at(i).y);
+				//~ Coord b = coord(polygon.at(0).x, polygon.at(0).y);
+						//~ 
+				//~ Coord titikPotong = intersection(a, b, y);
+//~ 
+				//~ if(titikPotong==b){
+					//~ if(isLocalMaxima(polygon.at(i), polygon.at(1), titikPotong))
+						//~ intersectionPoint.push_back(titikPotong);
+				//~ }
+				//~ else {
+					//~ if(prevTipot==titikPotong){
+						//~ if(isLocalMaxima(polygon.at(i-1), polygon.at(0), titikPotong))
+							//~ intersectionPoint.push_back(titikPotong);
+					//~ }
+					//~ else
+						//~ intersectionPoint.push_back(titikPotong);
+				//~ }
+			//~ }
+		//~ }else{
+			//~ if(isInBetween(polygon.at(i).y, polygon.at(i + 1).y, y)){
+				//~ Coord a = coord(polygon.at(i).x, polygon.at(i).y);
+				//~ Coord b = coord(polygon.at(i + 1).x, polygon.at(i + 1).y);
+				//~ 
+				//~ Coord titikPotong = intersection(a, b, y);
+//~ 
+				//~ // Jika sama dgn tipot sebelumnya, cek apakah local minima/maxima
+				//~ if(titikPotong==prevTipot) {
+					//~ Coord z = coord(polygon.at(i-1).x, polygon.at(i-1).y);
+					//~ if(isLocalMaxima(z, b, titikPotong)) {
+						//~ intersectionPoint.push_back(titikPotong);
+					//~ }
+				//~ }
+				//~ else {
+					//~ intersectionPoint.push_back(titikPotong);
+				//~ }
+				//~ prevTipot = intersectionPoint.back();
+			//~ }
+		//~ }
+	//~ }
+	//~ 
+	//~ sort(intersectionPoint.begin(), intersectionPoint.end(), compareByAxis);
+	//~ 
+	//~ return intersectionPoint;
+//~ }
+//~ vector<Coord> combineIntersection(vector<Coord> a, vector<Coord> b){
+	//~ for(int i = 0; i < b.size(); i++){
+		//~ a.push_back(b.at(i));
+	//~ }
+	//~ 
+	//~ sort(a.begin(), a.end(), compareByAxis);
+	//~ 
+	//~ return a;
+//~ }
+
+
+Coord lengthEndPoint(Coord startingPoint, int degree, int length){
+	Coord endPoint;
+	
+	endPoint.x = int((double)length * cos((double)degree * PI / (double)180)) + startingPoint.x;
+	endPoint.y = int((double)length * sin((double)degree * PI / (double)180)) + startingPoint.y;
+	
+	return endPoint;
 }
