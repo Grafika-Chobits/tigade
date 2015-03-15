@@ -154,7 +154,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 					x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
 					printf("x = %d\n", x);
 				}
-				y = y1 + (x - x1) * (y2 - y1) / (x2 - x1);
+				y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
 			}
 			else if(ot == BOTTOM);
 				//Cari titik potong dengan garis bawah
@@ -165,11 +165,11 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 					x=xmin1;
 				else
 				{
-					float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
-					float m2 = ((float)kiriBawah.y - (float)kiriAtas.y) / ((float)kiriBawah.x - (float)kiriAtas.x);
-					x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kiriAtas.x + (float)kiriAtas.y) / (m1 - m2) );
+					double m1 = ((double)y2 - (double)y1) / ((double)x2 - (double)x1);
+					double m2 = ((double)kiriBawah.y - (double)kiriAtas.y) / ((double)kiriBawah.x - (double)kiriAtas.x);
+					x = round( (m1*(double)x1 - (double)y1 - m2 * (double)kiriAtas.x + (double)kiriAtas.y) / (m1 - m2) );
 				}
-				y = y1 + (xmin1 - x1) * (y2 - y1) / (x2 - x1);
+				y = round((double)y1 + ((double)xmin1 - (double)x1) * ((double)y2 - (double)y1) / ((double)x2 - (double)x1));
 			}
 			else if(ot = TOPRIGHT);
 
