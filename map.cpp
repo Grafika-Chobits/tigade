@@ -219,7 +219,7 @@ void resetTermios(void) {
 int cameraX = 15;
 int cameraY = -30;
 
-int angleX = -30;
+int angleX = -35;
 int angleY = 0;
 
 int running = 1;

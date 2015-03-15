@@ -27,7 +27,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 																			Coord kiriBawah, Coord kananBawah, RGB color);
 																			
 std::vector<Line> cohen_sutherland(std::vector<Line> lines, Coord kiriAtas, Coord kananAtas, 
-																			Coord kiriBawah, Coord kananBawah, RGB color);																	
+																			Coord kiriBawah, Coord kananBawah);																	
 
 void cohen_sutherland (Frame *frm, int x1,int y1,int x2,int y2, int xmin,int ymin, int xmax, int ymax, RGB color);
 
