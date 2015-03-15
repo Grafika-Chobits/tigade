@@ -17,22 +17,16 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 	int xmin, ymin, xmax, ymax;
 	// printf("kiriAtas.x = %d\n", kiriAtas.x);
 	// printf("kiriBawah.x = %d\n", kiriBawah.x);
-	if(kiriAtas.x == kiriBawah.x && kananAtas.x == kananBawah.x){
-		printf("masuk checking x biasa\n");
+	if(kiriAtas.x == kiriBawah.x)
+	{
 		xmin = kiriAtas.x;
-		xmax = kananAtas.x;
 		if(x<xmin)
 			oc|=LEFT;
-		else if(x>xmax)
-			oc|=RIGHT;
 	}
 	else
 	{
-		printf("masuk else x\n");
 		xmin = kiriAtas.x > kiriBawah.x? kiriAtas.x:kiriBawah.x;
 		ymin = kiriAtas.x > kiriBawah.x? kiriAtas.y:kiriBawah.y;
-		xmax = kananAtas.x < kananBawah.x? kananAtas.x:kananBawah.x;
-		ymax = kananAtas.x < kananBawah.x? kananAtas.y:kananBawah.y;
 		if(x < xmin)
 		{
 			m = (kiriBawah.y - kiriAtas.y) / (kiriBawah.x - kiriAtas.x);
@@ -42,7 +36,19 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 			if(x < xPotong)
 				oc|=LEFT;
 		}
-		else if(x > xmax)
+	}
+
+	if(kananAtas.x == kananBawah.x)
+	{
+		xmax = kananAtas.x;
+		if(x>xmax)
+			oc|=RIGHT;
+	}
+	else
+	{
+		xmax = kananAtas.x < kananBawah.x? kananAtas.x:kananBawah.x;
+		ymax = kananAtas.x < kananBawah.x? kananAtas.y:kananBawah.y;
+		if(x > xmax)
 		{
 			m = (kananBawah.y - kananAtas.y) / (kananBawah.x - kananAtas.x);
 			printf("m dengan x > xmax = %f\n", m);
@@ -59,23 +65,17 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 		}
 	}
 	
-	if(kiriAtas.y == kananAtas.y && kiriBawah.y == kananBawah.y)
+	//ymin
+	if(kiriAtas.y == kananAtas.y)
 	{
-		// printf("masuk checking y biasa\n");
 		ymin = kiriAtas.y;
-		ymax = kiriBawah.y;
 		if(y<ymin)
 			oc|=TOP;
-		else if(y>ymax)
-			oc|=BOTTOM;
 	}
 	else
 	{
-		// printf("masuk else y\n");
 		ymin = kiriAtas.y > kananAtas.y? kiriAtas.y:kananAtas.y;
 		xmin = kiriAtas.y > kananAtas.y? kiriAtas.x:kananAtas.x;
-		ymax = kiriBawah.y < kananBawah.y? kiriBawah.y:kananBawah.y;
-		xmax = kiriBawah.y < kananBawah.y? kiriBawah.x:kananBawah.x;
 		if(y < ymin) 
 		{
 			m = (kananAtas.y - kiriAtas.y) / (kananAtas.x - kiriAtas.x);
@@ -87,7 +87,22 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 			if(y < yPotong)
 				oc|=TOP;
 		}
-		else if(y > ymax)
+	}
+
+	//Ngurus y max
+	if(kiriBawah.y == kananBawah.y)
+	{
+		ymax = kiriBawah.y;
+		
+		if(y>ymax)
+			oc|=BOTTOM;
+	}
+	else
+	{
+		ymax = kiriBawah.y < kananBawah.y? kiriBawah.y:kananBawah.y;
+		xmax = kiriBawah.y < kananBawah.y? kiriBawah.x:kananBawah.x;
+		
+		if(y > ymax)
 		{
 			m = (kananBawah.y - kiriBawah.y) / (kananBawah.x - kiriBawah.x);
 			//Cari titik potong
@@ -98,8 +113,8 @@ outcode compute(int x, int y , Coord kiriAtas, Coord kananAtas, Coord kiriBawah,
 			if(y > yPotong)
 				oc|=BOTTOM;
 		}
-		
 	}
+
 	printf("oc = %d\n", oc);
 	return oc;
 }
@@ -281,7 +296,35 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 				
 			}
 
-			else if(ot = BOTTOMRIGHT);
+			else if(ot = BOTTOMRIGHT)
+			{
+				// float mKanan = 0, mBawah = 0, xRight = 0, yRight = 0;
+				// float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+				// if(kananAtas.x != kananBawah.x) //Jika sisi kanannya tidak tegak lurus
+				// {
+				// 	mKanan = ((float)kananBawah.y - (float)kananAtas.y) / ((float)kananBawah.x - (float)kananAtas.x);
+				// 	xRight = round( (m1*(float)x1 - (float)y1 - mKanan * (float)kananBawah.x + (float)kananBawah.y) / (m1 - mKanan));
+				// 	yRight = round((float)y1 + ((float)xRight - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+
+				// 	int xmin = kananAtas.x < kananBawah.x? kananAtas.x:kananBawah.x;
+				// 	int ymin = kananAtas.x < kananBawah.x? kananAtas.y:kananBawah.y;
+				// 	int xmax = kananAtas.x > kananBawah.x? kananAtas.x:kananBawah.x;
+				// 	int ymax = kananAtas.x > kananBawah.x? kananAtas.y:kananBawah.y;
+
+				// 	if(xRight > xmin && xRight < xmax && yRight > ymin && yRight < ymax)
+				// 		//Berpotongan dengan kanan
+				// 	{
+				// 		x = xRight;
+				// 		y = yRight;
+				// 	}
+				// 	else //berpotongan dengan atas
+				// 	{
+				// 		mBawah = ((float)kiriBawah.y - (float)kananBawah.y) / ((float)kiriBawah.x - (float)kananBawah.x);
+				// 		x = round( (m1*(float)x1 - (float)y1 - mBawah * (float)kananBawah.x + (float)kananBawah.y) / (m1 - mBawah));
+				// 		y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+				// 	}
+				// }
+			}
 
 			else if(ot = BOTTOMLEFT);
 
