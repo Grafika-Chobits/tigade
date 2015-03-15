@@ -229,21 +229,23 @@ void *threadFuncMouse(void *arg){
 	FILE *fmouse;
     char b[3];
 	fmouse = fopen("/dev/input/mice","r");
-	
     while(1){
-		fread(b,sizeof(char),3,fmouse);
-		leftClick = (b[0]&1)>0;
-	
-		if(leftClick == 1){
-			angleX = angleX - b[2] / mouseSensitivity;
-			angleY = angleY + b[1] / mouseSensitivity;
-		}else{
-			cameraX = cameraX + b[1] / mouseSensitivity;
-			cameraY = cameraY + b[2] / mouseSensitivity;
-		}
-    }
-    fclose(fmouse);
-
+                fread(b,sizeof(char),3,fmouse);
+                if ((b[0]&1)>0) { //leftbutton
+					windowSize += 20;
+				}
+				if ((b[0]&2)>0) { //rightbutton
+					if (windowSize>0) {
+						windowSize -= 20;
+					}
+				}
+				if ((b[0]&4)>0) { //mmb
+					xPlode = 1;
+				}
+				
+				windowLocation = coord(windowLocation.x+b[1],windowLocation.y-b[2]);
+        }
+        fclose(fmouse);
 	return NULL;
 }
 
@@ -778,6 +780,7 @@ int main() {
 	int running= 0;
 	
 	pthread_join(pth_mouse,NULL);
+	pthread_join(pth,NULL);
 	pthread_join(pth_keyboard,NULL);
 	
 	munmap(fb.ptr, sInfo.smem_len);
