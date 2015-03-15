@@ -122,6 +122,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 	std::vector<Line> clippedLines;
 	for (int i = 0; i < lines.size(); i++)
 	{
+		printf("Mulai operasi garis ke %d\n", i);
 		x1 = StartX(lines.at(i));
 		y1 = StartY(lines.at(i));
 		x2 = EndX(lines.at(i));
@@ -143,22 +144,27 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 			if(ot == TOP)
 				//Cari titik potong dengan garis atas
 			{
-				printf("Masuk TOP\n");
 				if(kiriAtas.y == kananAtas.y)
 				{
-					printf("Masuk if top\n");
 					y=ymin1;
 					x = x1 + (ymin1 - y1) * (x2-x1) / (y2-y1);
-					printf("x if top = %d\n", x);
-					printf("y if top = %d\n", y);
 				}
 				else
 				{
-					printf("Masuk else top\n");
 					float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
 					float m2 = ((float)kiriAtas.y - (float)kananAtas.y) / ((float)kiriAtas.x - (float)kananAtas.x);
-					x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
-					y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+					if(x1 != x2) //Jika garisnya tidak tegak lurus
+					{
+						x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
+						y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+					}
+					else //Jika garisnya tegak lurus
+					{
+						printf("masuk x1 == x2\n");
+						x = x1;
+						y = kiriAtas.y;
+					}
+					
 				}
 			}
 			else if(ot == RIGHT)
@@ -171,7 +177,6 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 					float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
 					float m2 = ((float)kananBawah.y - (float)kananAtas.y) / ((float)kananBawah.x - (float)kananAtas.x);
 					x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
-					printf("x = %d\n", x);
 				}
 				y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
 			}
@@ -204,7 +209,64 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 				}
 				y = round((double)y1 + ((double)xmin1 - (double)x1) * ((double)y2 - (double)y1) / ((double)x2 - (double)x1));
 			}
-			else if(ot = TOPRIGHT);
+			else if(ot = TOPRIGHT)
+			{
+				printf("masuk top right\n");
+				float mKanan = 0, mAtas = 0, xRight = 0, yRight = 0;
+				float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+				if(kananAtas.x != kananBawah.x) //Jika sisi kanannya tidak tegak lurus
+				{
+					mKanan = ((float)kananBawah.y - (float)kananAtas.y) / ((float)kananBawah.x - (float)kananAtas.x);
+					xRight = round( (m1*(float)x1 - (float)y1 - mKanan * (float)kananAtas.x + (float)kananAtas.y) / (m1 - mKanan));
+					yRight = round((float)y1 + ((float)xRight - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+
+					int xmin = kananAtas.x < kananBawah.x? kananAtas.x:kananBawah.x;
+					int ymin = kananAtas.x < kananBawah.x? kananAtas.y:kananBawah.y;
+					int xmax = kananAtas.x > kananBawah.x? kananAtas.x:kananBawah.x;
+					int ymax = kananAtas.x > kananBawah.x? kananAtas.y:kananBawah.y;
+
+					if(xRight > xmin && xRight < xmax && yRight > ymin && yRight < ymax)
+						//Berpotongan dengan kanan
+					{
+						x = xRight;
+						y = yRight;
+					}
+					else //berpotongan dengan atas
+					{
+						mAtas= ((float)kiriAtas.y - (float)kananAtas.y) / ((float)kiriAtas.x - (float)kananAtas.x);
+						x = round( (m1*(float)x1 - (float)y1 - mAtas * (float)kananAtas.x + (float)kananAtas.y) / (m1 - mAtas));
+						y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+					}
+				}
+				else //Sisi kanannya tegak lurus
+				{
+					
+					xRight =xmax1;
+					yRight = round((float)y1 + ((float)xRight - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+					if(yRight > kananAtas.y && yRight < kananBawah.y) //jika garis memotong kanan
+					{
+						x = xRight;
+						y = yRight;
+					}
+					else //jika garis memotong atas
+					{
+						if(kiriAtas.y == kananAtas.y)
+						{
+							y=ymin1;
+							x = x1 + (ymin1 - y1) * (x2-x1) / (y2-y1);
+						}
+						else
+						{
+							float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+							float m2 = ((float)kiriAtas.y - (float)kananAtas.y) / ((float)kiriAtas.x - (float)kananAtas.x);
+							x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
+							y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+						}
+					}
+
+				}
+				
+			}
 
 			else if(ot = BOTTOMRIGHT);
 
@@ -216,8 +278,8 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 			{
 				x2=x;
 				y2=y;
-				printf("x = %d\n", x2);
-				printf("y = %d\n", y2);
+				// printf("x = %d\n", x2);
+				// printf("y = %d\n", y2);
 				// o1=compute(x1,y1,kiriAtas, kananAtas, kiriBawah, kananBawah);
 			}
 			else
@@ -296,8 +358,9 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 		// {
 		// 	clippedLines.push_back(line(coord(x1, y1),coord(x2,y2)));
 		// }
-		drawFreeSquare(canvas, kiriAtas, kananAtas, kiriBawah, kananBawah, rgb(255,255,0));
+		printf("Selesai memproses garis ke %d\n", i);
 	}
+	drawFreeSquare(canvas, kiriAtas, kananAtas, kiriBawah, kananBawah, rgb(255,255,0));
 	return clippedLines;
 }
 
