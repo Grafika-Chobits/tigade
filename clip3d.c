@@ -140,8 +140,27 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 			ot=o1?o1:o2; //Nyari point mana yang ada di luar kotak, kemudian masukin ke ot
 							//Jika o1 != 0, ot = o1, else ot = o2
 							//Titik yang diluar udah ketemu
-			if(ot == TOP);
+			if(ot == TOP)
 				//Cari titik potong dengan garis atas
+			{
+				printf("Masuk TOP\n");
+				if(kiriAtas.y == kananAtas.y)
+				{
+					printf("Masuk if top\n");
+					y=ymin1;
+					x = x1 + (ymin1 - y1) * (x2-x1) / (y2-y1);
+					printf("x if top = %d\n", x);
+					printf("y if top = %d\n", y);
+				}
+				else
+				{
+					printf("Masuk else top\n");
+					float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
+					float m2 = ((float)kiriAtas.y - (float)kananAtas.y) / ((float)kiriAtas.x - (float)kananAtas.x);
+					x = round( (m1*(float)x1 - (float)y1 - m2 * (float)kananAtas.x + (float)kananAtas.y) / (m1 - m2) ); 
+					y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
+				}
+			}
 			else if(ot == RIGHT)
 				//Cari titik potong dengan garis kanan
 			{
@@ -183,6 +202,8 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 			{
 				x2=x;
 				y2=y;
+				printf("x = %d\n", x2);
+				printf("y = %d\n", y2);
 				// o1=compute(x1,y1,kiriAtas, kananAtas, kiriBawah, kananBawah);
 			}
 			else
