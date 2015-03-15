@@ -216,15 +216,18 @@ void resetTermios(void) {
 
 /* GLOBALVAR DECLARATIONS ----------------------------------------------- */
 
-int cameraX = 0;
-int cameraY = 0;
+int cameraX = 15;
+int cameraY = -30;
 
-int angleX = 0;
+int angleX = -30;
 int angleY = 0;
 
 int running = 1;
 
 int leftClick = 0;
+
+int xPosition = 0;
+int yPosition = 0;
 
 /* VIEW CONTROLLER: MOUSE AND KEYBOARD----------------------------------- */
 void *threadFuncMouse(void *arg)
@@ -235,51 +238,13 @@ void *threadFuncMouse(void *arg)
 	
     while(1){
 		fread(b,sizeof(char),3,fmouse);
-		leftClick = (b[0]&1)>0;
-	
-		if(leftClick == 1){
-			angleX = angleX - b[2] / mouseSensitivity;
-			angleY = angleY + b[1] / mouseSensitivity;
-		}else{
-			cameraX = cameraX + b[1] / mouseSensitivity;
-			cameraY = cameraY + b[2] / mouseSensitivity;
-		}
+		xPosition = xPosition + b[1];
+		yPosition = yPosition - b[2];
     }
     fclose(fmouse);
 
 	return NULL;
 }
-
-void *threadFuncKeyboard(void *arg)
-{
-	char c;
-    initTermios(0);    
-	
-    while(1){
-		read(0, &c, 1); 
-		if(c == 97){
-			angleY--;
-		}
-		
-		if(c == 100){
-			angleY++;
-		}
-		
-		if(c == 119){
-			angleX--;
-		}
-		
-		if(c == 115){
-			angleX++;
-		}
-		
-    }
-
-    resetTermios();
-    
-	return NULL;
-}
-
 
 /* MAIN FUNCTION ------------------------------------------------------- */
 int main() {	
@@ -319,13 +284,10 @@ int main() {
 	// prepare environment controller
 	unsigned char loop = 1; // frame loop controller
 	Frame cFrame; // composition frame (Video RAM)
-		
+	
 	pthread_t pth_mouse;
 	pthread_create(&pth_mouse,NULL,threadFuncMouse,NULL);
-	
-	pthread_t pth_keyboard;
-	pthread_create(&pth_keyboard,NULL,threadFuncKeyboard,NULL);
-	
+		
 	int zoom = 400;
 	
 	while (loop) {
@@ -335,17 +297,8 @@ int main() {
 		flushFrame(&cFrame, rgb(0,0,0));
 		
 		// draw ITB's map
-		drawITB(&cFrame, coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
+		drawITB(&cFrame, coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, xPosition, yPosition, rgb(99,99,99));
 		
-		// create 3d block
-		/*drawBlock(&cFrame, block(coord3d(50,50,50), 100, 100, 100), coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
-		drawBlock(&cFrame, block(coord3d(50,50,160), 100, 100, 100), coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
-		drawBlock(&cFrame, block(coord3d(160,50,50), 100, 100, 100), coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
-		
-		drawBlock(&cFrame, block(coord3d(-150,50,50), 100, 100, 100), coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
-		drawBlock(&cFrame, block(coord3d(-150,50,160), 100, 100, 100), coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
-		drawBlock(&cFrame, block(coord3d(-260,50,50), 100, 100, 100), coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, rgb(99,99,99));
-		*/
 		//show frame
 		showFrame(&cFrame,&fb);	
 	}
@@ -354,7 +307,6 @@ int main() {
 	int running= 0;
 	
 	pthread_join(pth_mouse,NULL);
-	pthread_join(pth_keyboard,NULL);
 	
 	munmap(fb.ptr, sInfo.smem_len);
 	close(fbFile);
