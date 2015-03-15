@@ -708,7 +708,8 @@ void drawITB(Frame *frm, Coord3d cameraPosition, int angleX, int angleY, int scr
 	clippedLinesRight = cohen_sutherland(clippedLinesRight, aulaTimur.at(6).end, aulaTimur.at(6).start, aulaTimur.at(2).end, aulaTimur.at(2).start);
 	//clippedLinesRight = cohen_sutherland(clippedLinesRight, aulaTimur.at(11).end, aulaTimur.at(11).start, aulaTimur.at(8).end, aulaTimur.at(8).start);
 	
-	
+	/*appendLines(&allLines, perpus);
+	appendLines(&allLines, pau);
 	appendLines(&allLines, oktagon);
 	appendLines(&allLines, comlabs);
 	appendLines(&allLines, tvst);
@@ -722,7 +723,7 @@ void drawITB(Frame *frm, Coord3d cameraPosition, int angleX, int angleY, int scr
 	appendLines(&allLines, gkuBarat);
 	appendLines(&allLines, gkuTimur);
 	appendLines(&allLines, aulaTimur);
-	appendLines(&allLines, aulaBarat);
+	appendLines(&allLines, aulaBarat);*/
 
 	
 	for(int i = 0; i < allLines.size(); i++){
