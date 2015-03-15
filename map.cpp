@@ -435,8 +435,8 @@ void warzone(FrameBuffer *fb, Frame *cF,Frame *frm , int canvasWidth , int canva
 				fadeOut(frm,planeNotHit-35);
 			}
 		}
-showFrame(cF,fb);	
-}
+	showFrame(cF,fb);	
+	}
 }
 
 /* MAIN FUNCTION ------------------------------------------------------- */
@@ -539,14 +539,14 @@ int main() {
 			//in hue selector
 			if (isInBound(getCursorCoord(&mouse),coord(299,50), coord(1066,100))) {
 				hue = getCursorCoord(&mouse).x-299;
-				printf("r: %d, g: %d, b: %d\n", colorValue.r, colorValue.g, colorValue.b);
+				//printf("r: %d, g: %d, b: %d\n", colorValue.r, colorValue.g, colorValue.b);
 			}
 			
 			//in sl selector
 			if (isInBound(getCursorCoord(&mouse),coord(299,120), coord(555,376))) {
 				sat = getCursorCoord(&mouse).y-120;
 				lum = getCursorCoord(&mouse).x-299;
-				printf("r: %d, g: %d, b: %d\n", colorValue.r, colorValue.g, colorValue.b);
+				//printf("r: %d, g: %d, b: %d\n", colorValue.r, colorValue.g, colorValue.b);
 			}
 			
 			//in canvas
@@ -566,17 +566,23 @@ int main() {
 
 	// setup warzone ================================================================================================================================
 	flushFrame(&canvas, rgb(0,0,0));
-	int canvasWidth = 1100;
-	int canvasHeight = 600;
+	canvasWidth = 1100;
+	canvasHeight = 600;
 	loop = 1;
 	
-	warzone(&fb,&cFrame,&canvas,canvasWidth,canvasHeight,canvasPosition,colorShip);
+	warzone(&fb,&cFrame,&canvas,canvasWidth,canvasHeight,canvasPosition,colorValue);
 	
 	
 	
 	
 	// setup map ===================================================================================================================================
 	loop = 1;
+	
+	Coord viewportOrigin = coord(999, 399);
+	int viewportSize = 300;
+	
+	canvasWidth = 1300;
+	canvasHeight = 700;
 
 	//baling
 	int balingCounter=0;
@@ -590,6 +596,11 @@ int main() {
 	vector<Line> mapLines;
 	vector<Line> heliLines;
 	vector<Line> kapalLines;
+	vector<Line> allLines;
+	vector<Line> croppedLines;
+	
+	pthread_t pth;
+	pthread_create(&pth,NULL,threadFunc,NULL);
 	
 	//egg
 	int mul = 0;

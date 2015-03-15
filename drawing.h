@@ -36,15 +36,6 @@ void drawStickmanAndCannon(Frame *frame, Coord shipPosition, RGB color, int coun
 void animateBan(Frame *frm, Coord *loc, RGB color, float *bVel, float *bVelX);
 void drawWalkingStickman(Frame *frame, Coord center, RGB color);
 void drawParachute(Frame *frame, Coord center, RGB color, int size);
-//~ bool isSlopeEqualsZero(int y0, int y1);
-//~ bool isInBetween(int y0, int y1, int yTest);
-//~ Coord intersection(Coord a, Coord b, int y);
-//~ bool compareByAxis(const s_coord &a, const s_coord &b);
-//~ bool compareSameAxis(const s_coord &a, const s_coord &b);
-//~ bool operator==(const Coord& lhs, const Coord& rhs);
-//~ bool isLocalMaxima(const Coord& a, const Coord& b, const Coord& titikPotong);
-//~ vector<Coord> intersectionGenerator(int y, vector<Coord> polygon);
-//~ vector<Coord> combineIntersection(vector<Coord> a, vector<Coord> b);
 Coord lengthEndPoint(Coord startingPoint, int degree, int length);
 
 
