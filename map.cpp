@@ -674,7 +674,7 @@ int main() {
 	warzone(&fb,&cFrame,&canvas,canvasWidth,canvasHeight,canvasPosition,colorValue);
 	
 	// setup Static3D ===============================================================================================================================
-	int zoom;
+	// int zoom;
 	// pthread_t pth_mouse_static3d;
 	// pthread_create(&pth_mouse_static3d,NULL,threadFuncMouseStatic3D,NULL);
 	// zoom = 400;
@@ -691,7 +691,6 @@ int main() {
 	// 	//show frame
 	// 	showFrame(&cFrame,&fb);	
 	// }
-	// pthread_join(pth_mouse_static3d,NULL);
 
 	// setup Dynamic3D ===============================================================================================================================
 	
@@ -702,7 +701,7 @@ int main() {
 	pthread_t pth_keyboard;
 	pthread_create(&pth_keyboard,NULL,threadFuncKeyboard,NULL);
 	
-	zoom = 400;
+	int zoom = 400;
 	
 	while (loop) {
 		
@@ -819,10 +818,11 @@ int main() {
 
 	/* Cleanup --------------------------------------------------------- */
 	int running= 0;
-	
+
 	pthread_join(pth_mouse,NULL);
 	pthread_join(pth,NULL);
 	pthread_join(pth_keyboard,NULL);
+	// pthread_join(pth_mouse_static3d,NULL);
 	
 	munmap(fb.ptr, sInfo.smem_len);
 	close(fbFile);
