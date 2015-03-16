@@ -148,7 +148,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 	std::vector<Line> clippedLines;
 	for (int i = 0; i < lines.size(); i++)
 	{
-		printf("Mulai operasi garis ke %d\n", i);
+		// printf("Mulai operasi garis ke %d\n", i);
 		x1 = StartX(lines.at(i));
 		y1 = StartY(lines.at(i));
 		x2 = EndX(lines.at(i));
@@ -157,7 +157,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 		outcode o1,o2,ot;
 		o1=compute(x1,y1, kiriAtas, kananAtas, kiriBawah, kananBawah);
 		o2=compute(x2,y2, kiriAtas, kananAtas, kiriBawah, kananBawah);
-		printf("oc2 = %d\n", o2);
+		// printf("oc2 = %d\n", o2);
 		if(o1&o2) //kalo garisnya sama sekali gak berpotongan
 		{
 			clippedLines.push_back(line(coord(x1,y1),coord(x2,y2)));
@@ -251,7 +251,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 			}
 			else if(ot == TOPRIGHT)
 			{
-				printf("masuk top right\n");
+				// printf("masuk top right\n");
 				float mKanan = 0, mAtas = 0, xRight = 0, yRight = 0;
 				float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
 				if(kananAtas.x != kananBawah.x) //Jika sisi kanannya tidak tegak lurus
@@ -310,7 +310,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 
 			else if(ot == BOTTOMRIGHT)
 			{
-				printf("Masuk BOTTOMRIGHT\n");
+				// printf("Masuk BOTTOMRIGHT\n");
 				float mKanan = 0, mBawah = 0, xRight = 0, yRight = 0;
 				float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
 				if(kananAtas.x != kananBawah.x) //Jika sisi kanannya tidak tegak lurus
@@ -327,13 +327,13 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 					if(xRight > xmin && xRight < xmax && yRight > ymin && yRight < ymax)
 						//Berpotongan dengan kanan
 					{
-						printf("Berpotongan dengan kanan\n");
+						// printf("Berpotongan dengan kanan\n");
 						x = xRight;
 						y = yRight;
 					}
 					else //berpotongan dengan bawah
 					{
-						printf("Berpotongan dengan bawah\n");
+						// printf("Berpotongan dengan bawah\n");
 						mBawah = ((float)kiriBawah.y - (float)kananBawah.y) / ((float)kiriBawah.x - (float)kananBawah.x);
 						x = round( (m1*(float)x1 - (float)y1 - mBawah * (float)kananBawah.x + (float)kananBawah.y) / (m1 - mBawah));
 						y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
@@ -383,23 +383,23 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 					int ymin = kiriAtas.y < kiriBawah.y? kiriAtas.y:kiriBawah.y;
 					int xmax = kiriAtas.x > kiriBawah.x? kiriAtas.x:kiriBawah.x;
 					int ymax = kiriAtas.y > kiriBawah.y? kiriAtas.y:kiriBawah.y;
-					printf("xmin = %d\n", xmin);
-					printf("xmax = %d\n", xmax);
-					printf("xLEFT = %f\n", xLeft);
-					printf("ymin = %d\n", ymin);
-					printf("ymax = %d\n", ymax);
-					printf("yLEFT = %f\n", yLeft);
+					// printf("xmin = %d\n", xmin);
+					// printf("xmax = %d\n", xmax);
+					// printf("xLEFT = %f\n", xLeft);
+					// printf("ymin = %d\n", ymin);
+					// printf("ymax = %d\n", ymax);
+					// printf("yLEFT = %f\n", yLeft);
 
 					if(xLeft > xmin && xLeft < xmax && yLeft > ymin && yLeft < ymax)
 						//Berpotongan dengan kiri
 					{
-						printf("Berpotongan dengan kiri\n");
+						// printf("Berpotongan dengan kiri\n");
 						x = xLeft;
 						y = yLeft;
 					}
 					else //berpotongan dengan bawah
 					{
-						printf("Berpotongan dengan bawah\n");
+						// printf("Berpotongan dengan bawah\n");
 						mBawah = ((float)kiriBawah.y - (float)kananBawah.y) / ((float)kiriBawah.x - (float)kananBawah.x);
 						x = round( (m1*(float)x1 - (float)y1 - mBawah * (float)kiriBawah.x + (float)kiriBawah.y) / (m1 - mBawah));
 						y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
@@ -449,23 +449,23 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 					int ymin = kiriAtas.y < kiriBawah.y? kiriAtas.y:kiriBawah.y;
 					int xmax = kiriAtas.x > kiriBawah.x? kiriAtas.x:kiriBawah.x;
 					int ymax = kiriAtas.y > kiriBawah.y? kiriAtas.y:kiriBawah.y;
-					printf("xmin = %d\n", xmin);
-					printf("xmax = %d\n", xmax);
-					printf("xLEFT = %f\n", xLeft);
-					printf("ymin = %d\n", ymin);
-					printf("ymax = %d\n", ymax);
-					printf("yLEFT = %f\n", yLeft);
+					// printf("xmin = %d\n", xmin);
+					// printf("xmax = %d\n", xmax);
+					// printf("xLEFT = %f\n", xLeft);
+					// printf("ymin = %d\n", ymin);
+					// printf("ymax = %d\n", ymax);
+					// printf("yLEFT = %f\n", yLeft);
 
 					if(xLeft > xmin && xLeft < xmax && yLeft > ymin && yLeft < ymax)
 						//Berpotongan dengan kiri
 					{
-						printf("Berpotongan dengan kiri\n");
+						// printf("Berpotongan dengan kiri\n");
 						x = xLeft;
 						y = yLeft;
 					}
 					else //berpotongan dengan atas
 					{
-						printf("Berpotongan dengan bawah\n");
+						// printf("Berpotongan dengan bawah\n");
 						mAtas = ((float)kiriAtas.y - (float)kananAtas.y) / ((float)kiriAtas.x - (float)kananAtas.x);
 						x = round( (m1*(float)x1 - (float)y1 - mAtas * (float)kiriAtas.x + (float)kiriAtas.y) / (m1 - mAtas));
 						y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
@@ -584,7 +584,7 @@ std::vector<Line> cohen_sutherland(Frame *canvas, std::vector<Line> lines, Coord
 		// {
 		// 	clippedLines.push_back(line(coord(x1, y1),coord(x2,y2)));
 		// }
-		printf("Selesai memproses garis ke %d\n", i);
+		// printf("Selesai memproses garis ke %d\n", i);
 	}
 	drawFreeSquare(canvas, kiriAtas, kananAtas, kiriBawah, kananBawah, rgb(255,255,0));
 	return clippedLines;
@@ -752,7 +752,7 @@ std::vector<Line> cohen_sutherland(std::vector<Line> lines, Coord kiriAtas, Coor
 	
 	for (int i = 0; i < lines.size(); i++)
 	{
-		printf("Mulai operasi garis ke %d\n", i);
+		// printf("Mulai operasi garis ke %d\n", i);
 		x1 = StartX(lines.at(i));
 		y1 = StartY(lines.at(i));
 		x2 = EndX(lines.at(i));
@@ -761,7 +761,7 @@ std::vector<Line> cohen_sutherland(std::vector<Line> lines, Coord kiriAtas, Coor
 		outcode o1,o2,ot;
 		o1=compute(x1,y1, kiriAtas, kananAtas, kiriBawah, kananBawah);
 		o2=compute(x2,y2, kiriAtas, kananAtas, kiriBawah, kananBawah);
-		printf("oc2 = %d\n", o2);
+		// printf("oc2 = %d\n", o2);
 		if(o1&o2) //kalo garisnya sama sekali gak berpotongan
 		{
 			clippedLines.push_back(line(coord(x1,y1),coord(x2,y2)));
@@ -855,7 +855,7 @@ std::vector<Line> cohen_sutherland(std::vector<Line> lines, Coord kiriAtas, Coor
 			}
 			else if(ot == TOPRIGHT)
 			{
-				printf("masuk top right\n");
+				// printf("masuk top right\n");
 				float mKanan = 0, mAtas = 0, xRight = 0, yRight = 0;
 				float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
 				if(kananAtas.x != kananBawah.x) //Jika sisi kanannya tidak tegak lurus
@@ -914,7 +914,7 @@ std::vector<Line> cohen_sutherland(std::vector<Line> lines, Coord kiriAtas, Coor
 
 			else if(ot == BOTTOMRIGHT)
 			{
-				printf("Masuk BOTTOMRIGHT\n");
+				// printf("Masuk BOTTOMRIGHT\n");
 				float mKanan = 0, mBawah = 0, xRight = 0, yRight = 0;
 				float m1 = ((float)y2 - (float)y1) / ((float)x2 - (float)x1);
 				if(kananAtas.x != kananBawah.x) //Jika sisi kanannya tidak tegak lurus
@@ -931,13 +931,13 @@ std::vector<Line> cohen_sutherland(std::vector<Line> lines, Coord kiriAtas, Coor
 					if(xRight > xmin && xRight < xmax && yRight > ymin && yRight < ymax)
 						//Berpotongan dengan kanan
 					{
-						printf("Berpotongan dengan kanan\n");
+						// printf("Berpotongan dengan kanan\n");
 						x = xRight;
 						y = yRight;
 					}
 					else //berpotongan dengan bawah
 					{
-						printf("Berpotongan dengan bawah\n");
+						// printf("Berpotongan dengan bawah\n");
 						mBawah = ((float)kiriBawah.y - (float)kananBawah.y) / ((float)kiriBawah.x - (float)kananBawah.x);
 						x = round( (m1*(float)x1 - (float)y1 - mBawah * (float)kananBawah.x + (float)kananBawah.y) / (m1 - mBawah));
 						y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
@@ -987,23 +987,23 @@ std::vector<Line> cohen_sutherland(std::vector<Line> lines, Coord kiriAtas, Coor
 					int ymin = kiriAtas.y < kiriBawah.y? kiriAtas.y:kiriBawah.y;
 					int xmax = kiriAtas.x > kiriBawah.x? kiriAtas.x:kiriBawah.x;
 					int ymax = kiriAtas.y > kiriBawah.y? kiriAtas.y:kiriBawah.y;
-					printf("xmin = %d\n", xmin);
-					printf("xmax = %d\n", xmax);
-					printf("xLEFT = %f\n", xLeft);
-					printf("ymin = %d\n", ymin);
-					printf("ymax = %d\n", ymax);
-					printf("yLEFT = %f\n", yLeft);
+					// printf("xmin = %d\n", xmin);
+					// printf("xmax = %d\n", xmax);
+					// printf("xLEFT = %f\n", xLeft);
+					// printf("ymin = %d\n", ymin);
+					// printf("ymax = %d\n", ymax);
+					// printf("yLEFT = %f\n", yLeft);
 
 					if(xLeft > xmin && xLeft < xmax && yLeft > ymin && yLeft < ymax)
 						//Berpotongan dengan kiri
 					{
-						printf("Berpotongan dengan kiri\n");
+						// printf("Berpotongan dengan kiri\n");
 						x = xLeft;
 						y = yLeft;
 					}
 					else //berpotongan dengan bawah
 					{
-						printf("Berpotongan dengan bawah\n");
+						// printf("Berpotongan dengan bawah\n");
 						mBawah = ((float)kiriBawah.y - (float)kananBawah.y) / ((float)kiriBawah.x - (float)kananBawah.x);
 						x = round( (m1*(float)x1 - (float)y1 - mBawah * (float)kiriBawah.x + (float)kiriBawah.y) / (m1 - mBawah));
 						y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
@@ -1053,23 +1053,23 @@ std::vector<Line> cohen_sutherland(std::vector<Line> lines, Coord kiriAtas, Coor
 					int ymin = kiriAtas.y < kiriBawah.y? kiriAtas.y:kiriBawah.y;
 					int xmax = kiriAtas.x > kiriBawah.x? kiriAtas.x:kiriBawah.x;
 					int ymax = kiriAtas.y > kiriBawah.y? kiriAtas.y:kiriBawah.y;
-					printf("xmin = %d\n", xmin);
-					printf("xmax = %d\n", xmax);
-					printf("xLEFT = %f\n", xLeft);
-					printf("ymin = %d\n", ymin);
-					printf("ymax = %d\n", ymax);
-					printf("yLEFT = %f\n", yLeft);
+					// printf("xmin = %d\n", xmin);
+					// printf("xmax = %d\n", xmax);
+					// printf("xLEFT = %f\n", xLeft);
+					// printf("ymin = %d\n", ymin);
+					// printf("ymax = %d\n", ymax);
+					// printf("yLEFT = %f\n", yLeft);
 
 					if(xLeft > xmin && xLeft < xmax && yLeft > ymin && yLeft < ymax)
 						//Berpotongan dengan kiri
 					{
-						printf("Berpotongan dengan kiri\n");
+						// printf("Berpotongan dengan kiri\n");
 						x = xLeft;
 						y = yLeft;
 					}
 					else //berpotongan dengan atas
 					{
-						printf("Berpotongan dengan bawah\n");
+						// printf("Berpotongan dengan bawah\n");
 						mAtas = ((float)kiriAtas.y - (float)kananAtas.y) / ((float)kiriAtas.x - (float)kananAtas.x);
 						x = round( (m1*(float)x1 - (float)y1 - mAtas * (float)kiriAtas.x + (float)kiriAtas.y) / (m1 - mAtas));
 						y = round((float)y1 + ((float)x - (float)x1) * ((float)y2 - (float)y1) / ((float)x2 - (float)x1));
@@ -1124,7 +1124,7 @@ std::vector<Line> cohen_sutherland(std::vector<Line> lines, Coord kiriAtas, Coor
 		{
 
 		}
-		printf("Selesai memproses garis ke %d\n", i);
+		// printf("Selesai memproses garis ke %d\n", i);
 	}
 
 	return clippedLines;
