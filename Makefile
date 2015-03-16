@@ -9,8 +9,11 @@ CFLAGS  = -g
 # the build target executable:
 TARGET = main
 TARGETSTATIC = static/main
+TARGETMAP = map/main
 
 $(TARGET): map.cpp
+	
+	$(CC) -o $(TARGETMAP) map/map.cpp map/allstruct.c map/cursor.c map/video.c map/plotting.c map/rotasi.c map/drawing.c map/clip.c -lpthread
 	
 	$(CC) -o $(TARGETSTATIC) static/map.cpp static/allstruct.c static/cursor.c static/video.c static/plotting.c static/rotasi.c static/drawing.c static/clip3d.c -lpthread
 
@@ -18,4 +21,5 @@ $(TARGET): map.cpp
 	
 clean:
 	$(RM) $(TARGET)
-	$(RM) $(TARGETSTATIC) 
+	$(RM) $(TARGETSTATIC)
+	$(RM) $(TARGETMAP) 
