@@ -48,5 +48,8 @@ void drawSquare(Frame *frm, Coord kiriAtas, Coord KananBawah, RGB color);
 void drawBlock(Frame *frm, Block block, Coord3d cameraPosition, int angleX, int angleY, int screenWidth, int screenHeight, RGB color);
 
 void drawITB(Frame *frm, Coord3d cameraPosition, int angleX, int angleY, int screenWidth, int screenHeight, RGB color);
+void drawITBStatic(Frame *frm, Coord3d cameraPosition, int angleX, int angleY, int screenWidth, int screenHeight, int xPosition, int yPosition, RGB color);
+
+void appendLines(std::vector<Line> *allLines, std::vector<Line> building);
 
 #endif

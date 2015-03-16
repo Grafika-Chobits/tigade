@@ -1293,6 +1293,197 @@ void drawITB(Frame *frm, Coord3d cameraPosition, int angleX, int angleY, int scr
 	}
 }
 
+void appendLines(std::vector<Line> *allLines, std::vector<Line> building){
+	for(int i = 0; i < building.size(); i++){
+		allLines->push_back(building.at(i));
+	}
+}
+
+void drawITBStatic(Frame *frm, Coord3d cameraPosition, int angleX, int angleY, int screenWidth, int screenHeight, int xPosition, int yPosition, RGB color){
+	vector<Block> buildings;
+	vector<Line> allLines;
+	vector<Line> clippedLinesLeft;
+	vector<Line> clippedLinesRight;
+	int halfScreenWidth = screenWidth / 2;
+	int halfScreenHeight = screenHeight / 2;
+				
+	// GKU Barat
+	buildings.push_back(block(coord3d(-170, 0, 75), 45, 45, 40));
+	vector<Line> gkuBarat = perspectiveProjection(buildings[0], cameraPosition, angleX, angleY);
+	
+	// labtek
+	buildings.push_back(block(coord3d(-95, 0, 90), 95, 30, 50));
+	vector<Line> labtekV = perspectiveProjection(buildings[1], cameraPosition, angleX, angleY);
+	buildings.push_back(block(coord3d(-100, 0, 40), 95, 30, 50));
+	vector<Line> labtekVI = perspectiveProjection(buildings[2], cameraPosition, angleX, angleY);
+	buildings.push_back(block(coord3d(20, 0, 90), 95, 30, 50));
+	vector<Line> labtekVIII = perspectiveProjection(buildings[3], cameraPosition, angleX, angleY);
+	buildings.push_back(block(coord3d(25, 0, 40), 95, 30, 50));
+	vector<Line> labtekVII = perspectiveProjection(buildings[4], cameraPosition, angleX, angleY);
+	
+	// Oktagon, TVST
+	buildings.push_back(block(coord3d(-40, 0, -10), 40, 40, 40));
+	vector<Line> tvst = perspectiveProjection(buildings[5], cameraPosition, angleX, angleY);
+	buildings.push_back(block(coord3d(-40, 0, -60), 40, 40, 40));
+	vector<Line> oktagon = perspectiveProjection(buildings[6], cameraPosition, angleX, angleY);
+		
+	// Comlabs, PLN
+	buildings.push_back(block(coord3d(20, 0, -10), 40, 30, 40));
+	vector<Line> pln = perspectiveProjection(buildings[7], cameraPosition, angleX, angleY);
+	buildings.push_back(block(coord3d(20, 0, -70), 40, 30, 40));
+	vector<Line> comlabs = perspectiveProjection(buildings[8], cameraPosition, angleX, angleY);
+	
+	// PAU
+	buildings.push_back(block(coord3d(-40, 0, -120), 40, 70, 80));
+	vector<Line> pau = perspectiveProjection(buildings[9], cameraPosition, angleX, angleY);
+	
+	// Perpus
+	buildings.push_back(block(coord3d(40, 0, -130), 40, 60, 40));
+	vector<Line> perpus = perspectiveProjection(buildings[10], cameraPosition, angleX, angleY);
+	
+	// GKU Timur
+	buildings.push_back(block(coord3d(155, 0, 65), 55, 25, 50));
+	vector<Line> gkuTimur = perspectiveProjection(buildings[11], cameraPosition, angleX, angleY);
+	
+	// CC
+	buildings.push_back(block(coord3d(-50, 0, 160), 50, 20, 30));
+	vector<Line> ccBarat = perspectiveProjection(buildings[12], cameraPosition, angleX, angleY);
+	buildings.push_back(block(coord3d(25, 0, 160), 50, 20, 30));
+	vector<Line> ccTimur = perspectiveProjection(buildings[13], cameraPosition, angleX, angleY);
+	
+	// Aula
+	buildings.push_back(block(coord3d(50, 0, 270), 60, 30, 20));
+	vector<Line> aulaTimur = perspectiveProjection(buildings[14], cameraPosition, angleX, angleY);
+	buildings.push_back(block(coord3d(-80, 0, 270), 60, 30, 20));
+	vector<Line> aulaBarat = perspectiveProjection(buildings[15], cameraPosition, angleX, angleY);
+	
+	appendLines(&clippedLinesLeft, pau);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, pau.at(2).end, pau.at(2).start, pau.at(0).start, pau.at(0).end);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, pau.at(6).end, pau.at(6).start, pau.at(2).end, pau.at(2).start);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, pau.at(10).start, pau.at(10).end, pau.at(9).start, pau.at(9).end);
+	
+	appendLines(&clippedLinesLeft, oktagon);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, oktagon.at(2).end, oktagon.at(2).start, oktagon.at(0).start, oktagon.at(0).end);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, oktagon.at(6).end, oktagon.at(6).start, oktagon.at(2).end, oktagon.at(2).start);
+	//clippedLinesLeft = cohen_sutherland(clippedLinesLeft, oktagon.at(10).start, oktagon.at(10).end, oktagon.at(9).start, oktagon.at(9).end);
+	
+	appendLines(&clippedLinesLeft, tvst);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, tvst.at(2).end, tvst.at(2).start, tvst.at(0).start, tvst.at(0).end);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, tvst.at(6).end, tvst.at(6).start, tvst.at(2).end, tvst.at(2).start);
+	//clippedLinesLeft = cohen_sutherland(clippedLinesLeft, tvst.at(10).start, tvst.at(10).end, tvst.at(9).start, tvst.at(9).end);
+	
+	appendLines(&clippedLinesLeft, labtekVI);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, labtekVI.at(2).end, labtekVI.at(2).start, labtekVI.at(0).start, labtekVI.at(0).end);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, labtekVI.at(6).end, labtekVI.at(6).start, labtekVI.at(2).end, labtekVI.at(2).start);
+	//clippedLinesLeft = cohen_sutherland(clippedLinesLeft, labtekVI.at(10).start, labtekVI.at(10).end, labtekVI.at(9).start, labtekVI.at(9).end);
+	
+	appendLines(&clippedLinesLeft, labtekV);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, labtekV.at(2).end, labtekV.at(2).start, labtekV.at(0).start, labtekV.at(0).end);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, labtekV.at(6).end, labtekV.at(6).start, labtekV.at(2).end, labtekV.at(2).start);
+	//clippedLinesLeft = cohen_sutherland(clippedLinesLeft, labtekVI.at(10).start, labtekVI.at(10).end, labtekVI.at(9).start, labtekVI.at(9).end);
+	
+	appendLines(&clippedLinesLeft, gkuBarat);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, gkuBarat.at(2).end, gkuBarat.at(2).start, gkuBarat.at(0).start, gkuBarat.at(0).end);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, gkuBarat.at(6).end, gkuBarat.at(6).start, gkuBarat.at(2).end, gkuBarat.at(2).start);
+	//clippedLinesLeft = cohen_sutherland(clippedLinesLeft, gkuBarat.at(10).start, gkuBarat.at(10).end, gkuBarat.at(9).start, gkuBarat.at(9).end);
+	
+	appendLines(&clippedLinesLeft, ccBarat);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, ccBarat.at(2).end, ccBarat.at(2).start, ccBarat.at(0).start, ccBarat.at(0).end);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, ccBarat.at(6).end, ccBarat.at(6).start, ccBarat.at(2).end, ccBarat.at(2).start);
+	//clippedLinesLeft = cohen_sutherland(clippedLinesLeft, ccBarat.at(10).start, ccBarat.at(10).end, ccBarat.at(9).start, ccBarat.at(9).end);
+	
+	appendLines(&clippedLinesLeft, aulaBarat);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, aulaBarat.at(2).end, aulaBarat.at(2).start, aulaBarat.at(0).start, aulaBarat.at(0).end);
+	clippedLinesLeft = cohen_sutherland(clippedLinesLeft, aulaBarat.at(6).end, aulaBarat.at(6).start, aulaBarat.at(2).end, aulaBarat.at(2).start);
+	//clippedLinesLeft = cohen_sutherland(clippedLinesLeft, aulaBarat.at(10).start, aulaBarat.at(10).end, aulaBarat.at(9).start, aulaBarat.at(9).end);
+	
+	appendLines(&clippedLinesRight, perpus);
+	clippedLinesRight = cohen_sutherland(clippedLinesRight, perpus.at(2).end, perpus.at(2).start, perpus.at(0).start, perpus.at(0).end);
+	clippedLinesRight = cohen_sutherland(clippedLinesRight, perpus.at(6).end, perpus.at(6).start, perpus.at(2).end, perpus.at(2).start);
+	//clippedLinesRight = cohen_sutherland(clippedLinesRight, perpus.at(11).end, perpus.at(11).start, perpus.at(8).end, perpus.at(8).start);
+	
+	appendLines(&clippedLinesRight, comlabs);
+	//clippedLinesRight = cohen_sutherland(clippedLinesRight, comlabs.at(2).end, comlabs.at(2).start, comlabs.at(0).start, comlabs.at(0).end);
+	//clippedLinesRight = cohen_sutherland(clippedLinesRight, comlabs.at(6).end, comlabs.at(6).start, comlabs.at(2).end, comlabs.at(2).start);
+	//clippedLinesRight = cohen_sutherland(clippedLinesRight, comlabs.at(11).end, comlabs.at(11).start, comlabs.at(8).end, comlabs.at(8).start);
+	
+	appendLines(&clippedLinesRight, pln);
+	clippedLinesRight = cohen_sutherland(clippedLinesRight, pln.at(2).end, pln.at(2).start, pln.at(0).start, pln.at(0).end);
+	clippedLinesRight = cohen_sutherland(clippedLinesRight, pln.at(6).end, pln.at(6).start, pln.at(2).end, pln.at(2).start);
+	//clippedLinesRight = cohen_sutherland(clippedLinesRight, pln.at(11).end, pln.at(11).start, pln.at(8).end, pln.at(8).start);
+	
+	appendLines(&clippedLinesRight, labtekVII);
+	clippedLinesRight = cohen_sutherland(clippedLinesRight, labtekVII.at(2).end, labtekVII.at(2).start, labtekVII.at(0).start, labtekVII.at(0).end);
+	clippedLinesRight = cohen_sutherland(clippedLinesRight, labtekVII.at(6).end, labtekVII.at(6).start, labtekVII.at(2).end, labtekVII.at(2).start);
+	//clippedLinesRight = cohen_sutherland(clippedLinesRight, labtekVII.at(11).end, labtekVII.at(11).start, labtekVII.at(8).end, labtekVII.at(8).start);
+	
+	appendLines(&clippedLinesRight, labtekVIII);
+	//clippedLinesRight = cohen_sutherland(clippedLinesRight, labtekVIII.at(2).end, labtekVIII.at(2).start, labtekVIII.at(0).start, labtekVIII.at(0).end);
+	//clippedLinesRight = cohen_sutherland(clippedLinesRight, labtekVIII.at(6).end, labtekVIII.at(6).start, labtekVIII.at(2).end, labtekVIII.at(2).start);
+	//clippedLinesRight = cohen_sutherland(clippedLinesRight, labtekVIII.at(11).end, labtekVIII.at(11).start, labtekVIII.at(8).end, labtekVIII.at(8).start);
+	
+	appendLines(&clippedLinesRight, gkuTimur);
+	clippedLinesRight = cohen_sutherland(clippedLinesRight, gkuTimur.at(2).end, gkuTimur.at(2).start, gkuTimur.at(0).start, gkuTimur.at(0).end);
+	clippedLinesRight = cohen_sutherland(clippedLinesRight, gkuTimur.at(6).end, gkuTimur.at(6).start, gkuTimur.at(2).end, gkuTimur.at(2).start);
+	//clippedLinesRight = cohen_sutherland(clippedLinesRight, gkuTimur.at(11).end, gkuTimur.at(11).start, gkuTimur.at(8).end, gkuTimur.at(8).start);
+	
+	appendLines(&clippedLinesRight, ccTimur);
+	clippedLinesRight = cohen_sutherland(clippedLinesRight, ccTimur.at(2).end, ccTimur.at(2).start, ccTimur.at(0).start, ccTimur.at(0).end);
+	clippedLinesRight = cohen_sutherland(clippedLinesRight, ccTimur.at(6).end, ccTimur.at(6).start, ccTimur.at(2).end, ccTimur.at(2).start);
+	//clippedLinesRight = cohen_sutherland(clippedLinesRight, ccTimur.at(11).end, ccTimur.at(11).start, ccTimur.at(8).end, ccTimur.at(8).start);
+	
+	appendLines(&clippedLinesRight, aulaTimur);
+	clippedLinesRight = cohen_sutherland(clippedLinesRight, aulaTimur.at(2).end, aulaTimur.at(2).start, aulaTimur.at(0).start, aulaTimur.at(0).end);
+	clippedLinesRight = cohen_sutherland(clippedLinesRight, aulaTimur.at(6).end, aulaTimur.at(6).start, aulaTimur.at(2).end, aulaTimur.at(2).start);
+	//clippedLinesRight = cohen_sutherland(clippedLinesRight, aulaTimur.at(11).end, aulaTimur.at(11).start, aulaTimur.at(8).end, aulaTimur.at(8).start);
+	
+	/*appendLines(&allLines, perpus);
+	appendLines(&allLines, pau);
+	appendLines(&allLines, oktagon);
+	appendLines(&allLines, comlabs);
+	appendLines(&allLines, tvst);
+	appendLines(&allLines, pln);
+	appendLines(&allLines, labtekVI);
+	appendLines(&allLines, labtekVII);
+	appendLines(&allLines, labtekV);
+	appendLines(&allLines, labtekVIII);
+	appendLines(&allLines, ccBarat);
+	appendLines(&allLines, ccTimur);
+	appendLines(&allLines, gkuBarat);
+	appendLines(&allLines, gkuTimur);
+	appendLines(&allLines, aulaTimur);
+	appendLines(&allLines, aulaBarat);*/
+
+	
+	for(int i = 0; i < allLines.size(); i++){
+		int startX = allLines.at(i).start.x + halfScreenWidth + xPosition;
+		int startY = allLines.at(i).start.y + halfScreenHeight + yPosition;
+		int endX = allLines.at(i).end.x + halfScreenWidth + xPosition;
+		int endY = allLines.at(i).end.y + halfScreenHeight + yPosition;
+		
+		plotLine(frm, startX, startY, endX, endY, color);
+	}
+	
+	for(int i = 0; i < clippedLinesLeft.size(); i++){
+		int startX = clippedLinesLeft.at(i).start.x + halfScreenWidth + xPosition;
+		int startY = clippedLinesLeft.at(i).start.y + halfScreenHeight + yPosition;
+		int endX = clippedLinesLeft.at(i).end.x + halfScreenWidth + xPosition;
+		int endY = clippedLinesLeft.at(i).end.y + halfScreenHeight + yPosition;
+		
+		plotLine(frm, startX, startY, endX, endY, rgb(0, 255, 0));
+	}
+	
+	for(int i = 0; i < clippedLinesRight.size(); i++){
+		int startX = clippedLinesRight.at(i).start.x + halfScreenWidth + xPosition;
+		int startY = clippedLinesRight.at(i).start.y + halfScreenHeight + yPosition;
+		int endX = clippedLinesRight.at(i).end.x + halfScreenWidth + xPosition;
+		int endY = clippedLinesRight.at(i).end.y + halfScreenHeight + yPosition;
+		
+		plotLine(frm, startX, startY, endX, endY, rgb(0, 255, 0));
+	}
+}
+
+
 Coord lengthEndPoint(Coord startingPoint, int degree, int length){
 	Coord endPoint;
 	

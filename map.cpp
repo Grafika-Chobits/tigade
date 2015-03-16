@@ -250,6 +250,28 @@ void *threadFuncMouse(void *arg){
 }
 
 /* VIEW CONTROLLER: MOUSE AND KEYBOARD----------------------------------- */
+int xPosition = 0, yPosition = 0;
+void *threadFuncMouseStatic3D(void *arg)
+{
+	FILE *fmouse;
+    char b[3];
+	fmouse = fopen("/dev/input/mice","r");
+	
+    while(1){
+		fread(b,sizeof(char),3,fmouse);
+		rightClick = (b[0]&2)>0;
+		xPosition = xPosition + b[1];
+		yPosition = yPosition - b[2];
+		if(rightClick == 1) {
+			loop = 0;
+		}
+    }
+    fclose(fmouse);
+
+	return NULL;
+}
+
+/* VIEW CONTROLLER: MOUSE AND KEYBOARD----------------------------------- */
 void *threadFuncMouse3D(void *arg){
 	FILE *fmouse;
     char b[3];
@@ -651,7 +673,26 @@ int main() {
 	
 	warzone(&fb,&cFrame,&canvas,canvasWidth,canvasHeight,canvasPosition,colorValue);
 	
-	
+	// setup Static3D ===============================================================================================================================
+	int zoom;
+	// pthread_t pth_mouse_static3d;
+	// pthread_create(&pth_mouse_static3d,NULL,threadFuncMouseStatic3D,NULL);
+	// zoom = 400;
+	// loop = 1;
+
+	// while(loop)
+	// {
+	// 	// clean canvas
+	// 	flushFrame(&cFrame, rgb(0,0,0));
+		
+	// 	// draw ITB's map
+	// 	drawITBStatic(&cFrame, coord3d(cameraX, cameraY, zoom), angleX, angleY, screenX, screenY, xPosition, yPosition, rgb(99,99,99));
+		
+	// 	//show frame
+	// 	showFrame(&cFrame,&fb);	
+	// }
+	// pthread_join(pth_mouse_static3d,NULL);
+
 	// setup Dynamic3D ===============================================================================================================================
 	
 	
@@ -661,7 +702,7 @@ int main() {
 	pthread_t pth_keyboard;
 	pthread_create(&pth_keyboard,NULL,threadFuncKeyboard,NULL);
 	
-	int zoom = 400;
+	zoom = 400;
 	
 	while (loop) {
 		
@@ -684,7 +725,7 @@ int main() {
 		//show frame
 		showFrame(&cFrame,&fb);	
 	}
-	
+
 	// setup map ===================================================================================================================================
 	loop = 1;
 	
