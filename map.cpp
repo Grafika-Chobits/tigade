@@ -424,7 +424,7 @@ void warzone(FrameBuffer *fb, Frame *cF,Frame *frm , int canvasWidth , int canva
 		}
 		else
 		{
-			rotateBalingBesar(frm,coord(planeXPosition + 160,planeYPosition+10),rgb(255,255,255),balingCounter--);
+			rotateBalingBesar(frm,coord(planeXPosition + 160,planeYPosition-10),rgb(255,255,255),balingCounter--);
 		}
 	
 		
